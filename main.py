@@ -21,12 +21,15 @@
 import pyzed.sl as sl
 import cv2
 import numpy as np
+import mapping
 
+def intersection(map_points, position):
+    
 
 def main():
     # Create a Camera object
     zed = sl.Camera()
-
+    map_points = mapping.return_3d_points()
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
     init_params.camera_resolution = sl.RESOLUTION.HD720  # Use HD720 video mode
