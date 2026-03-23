@@ -48,11 +48,12 @@ def create_dummy_geojson():
         ]
     }
     
-def return_3d_points(use_dummy=True):
+def return_3d_points(use_dummy=False):
     if use_dummy:
         parsed_geojson = create_dummy_geojson()
     else:
-        parsed_geojson = os.load("map.geojson")
+        with open("map.geojson", 'r') as file:
+            parsed_geojson = json.load(file)
 
     scaled_map_3d = scale_map_to_3d(parsed_geojson, default_z=0.0)
 

@@ -75,7 +75,7 @@ def fake_body_positions():
     ]
     
 def main():
-    map_points = mapping.return_3d_points(use_dummy=True)
+    map_points = mapping.return_3d_points(use_dummy=False)
 
     dummy_positions = fake_body_positions()
 
@@ -86,6 +86,8 @@ def main():
     triggered = intersection(map_points, dummy_positions)   
     
     print(triggered)
+    plot_points(map_points, dummy_positions)
+    
 # def main():
 #     # Create a Camera object
 #     zed = sl.Camera()
