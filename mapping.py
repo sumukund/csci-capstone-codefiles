@@ -5,9 +5,9 @@ import os
 
 RESOLUTION_WIDTH = 1080 
 RESOLUTION_HEIGHT = 720 
-MARGIN = 10
-ROOM_WIDTH = 20
-ROOM_DEPTH = 20
+MARGIN = 5
+ROOM_WIDTH = 25
+ROOM_DEPTH = 25
 FEET_TO_METERS = 0.3048
 
 
@@ -65,7 +65,6 @@ def return_3d_points(use_dummy=False):
 def convert_room_to_scale(ROOM_DEPTH, ROOM_WIDTH):
     room_width_m = ROOM_WIDTH * FEET_TO_METERS 
     room_depth_m = ROOM_DEPTH * FEET_TO_METERS
-    
     return room_width_m, room_depth_m
     
 
