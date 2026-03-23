@@ -1,6 +1,6 @@
 import json
 import geojson
-from shapely.geometry import Point, Polygon
+import os
 
 
 RESOLUTION_WIDTH = 1080 
@@ -23,71 +23,89 @@ def get_bbox(parsed_geojson):
     min_y, max_y = min(ys), max(ys)
     return min_x, max_x, min_y, max_y
 
-def map_to_3d(x, y, bbox, scale=1.0, z_value=0.0):
-    """
-    x, y         : original GeoJSON coordinates
-    bbox         : bounding box (min_x, max_x, min_y, max_y)
-    scale        : meters per unit in the GeoJSON
-    z_value      : height in meters (default 0 for ground)
-    """
+def map_to_3d(x, y, bbox, scale, z_value=0.0):
     min_x, max_x, min_y, max_y = bbox
 
-    x_trans = (x - min_x) * scale
-    y_trans = (y - min_y) * scale
+    # Normalize
+    x_norm = x - min_x
+    y_norm = y - min_y
 
-    z_trans = z_value
-    print(x_trans, y_trans, z_trans)
-    return x_trans, y_trans, z_trans
+    # Apply scale
+    x_scaled = x_norm * scale
+    y_scaled = y_norm * scale
 
-def load(geojson_file):
-        # Using geojson library
-    with open(geojson_file, 'r') as file:
-        parsed_geojson = geojson.load(file)
+    return x_scaled, y_scaled, z_value
+
+def create_dummy_geojson():
+    return {
+        "type": "FeatureCollection",
+        "features": [
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0, 0]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [10, 0]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [10, 10]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0, 10]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [5, 5]}},
+        ]
+    }
     
-    return parsed_geojson
+def return_3d_points(use_dummy=True):
+    if use_dummy:
+        parsed_geojson = create_dummy_geojson()
+    else:
+        parsed_geojson = os.load("map.geojson")
+
+    scaled_map_3d = scale_map_to_3d(parsed_geojson, default_z=0.0)
+
+    for feature in scaled_map_3d['features']:
+        print("3D point:", feature['geometry']['coordinates'])
+
+    return scaled_map_3d
 
 def convert_room_to_scale(ROOM_DEPTH, ROOM_WIDTH):
-    ROOM_WIDTH_M = ROOM_WIDTH * FEET_TO_METERS 
-    ROOM_DEPTH_M = ROOM_DEPTH * FEET_TO_METERS
+    room_width_m = ROOM_WIDTH * FEET_TO_METERS 
+    room_depth_m = ROOM_DEPTH * FEET_TO_METERS
     
+    return room_width_m, room_depth_m
     
-    
-def create_map(parsed_geojson):
-    return unscaled_map
 
-def scale_map_to_3d(parsed_geojson, scale=1.0, default_z=0.0):
+def compute_scale_to_room(bbox, room_width_m, room_depth_m, margin=0.5):
+    min_x, max_x, min_y, max_y = bbox
+    
+    data_width = max_x - min_x
+    data_height = max_y - min_y
+
+    usable_width = room_width_m - margin
+    usable_depth = room_depth_m - margin
+
+    scale_x = usable_width / data_width
+    scale_y = usable_depth / data_height
+
+    return min(scale_x, scale_y)
+
+def scale_map_to_3d(parsed_geojson, default_z=0.0):
     bbox = get_bbox(parsed_geojson)
+
+    room_width_m, room_depth_m = convert_room_to_scale(ROOM_DEPTH, ROOM_WIDTH)
+
+    scale = compute_scale_to_room(bbox, room_width_m, room_depth_m)
+
     scaled_features = []
 
     for feature in parsed_geojson['features']:
-        geom = feature['geometry']
-        if geom['type'] == 'Point':
-            x, y = geom['coordinates']
+        if feature['geometry']['type'] == 'Point':
+            x, y = feature['geometry']['coordinates']
+
             x3d, y3d, z3d = map_to_3d(x, y, bbox, scale, default_z)
+
             scaled_features.append({
                 'type': 'Feature',
                 'geometry': {
                     'type': 'Point',
                     'coordinates': [x3d, y3d, z3d]
-                },
-                'properties': feature.get('properties', {})
+                }
             })
 
     return {
         'type': 'FeatureCollection',
         'features': scaled_features
     }
-
-
-
-def return_3d_points():
-    parsed_geojson = load("map.geojson")
-    
-    SCALE = 0.1
-    
-    scaled_map_3d = scale_map_to_3d(parsed_geojson, scale=SCALE, default_z=0.0)
-
-    for feature in scaled_map_3d['features']:
-        print("3D point:", feature['geometry']['coordinates'])
-
-    return scaled_map_3d
