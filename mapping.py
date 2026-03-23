@@ -6,6 +6,11 @@ from shapely.geometry import Point, Polygon
 RESOLUTION_WIDTH = 1080 
 RESOLUTION_HEIGHT = 720 
 MARGIN = 10
+ROOM_WIDTH = 20
+ROOM_DEPTH = 20
+FEET_TO_METERS = 0.3048
+
+
 def get_bbox(parsed_geojson):
     xs, ys = [], []
     for feature in parsed_geojson['features']:
@@ -41,6 +46,12 @@ def load(geojson_file):
     
     return parsed_geojson
 
+def convert_room_to_scale(ROOM_DEPTH, ROOM_WIDTH):
+    ROOM_WIDTH_M = ROOM_WIDTH * FEET_TO_METERS 
+    ROOM_DEPTH_M = ROOM_DEPTH * FEET_TO_METERS
+    
+    
+    
 def create_map(parsed_geojson):
     return unscaled_map
 
