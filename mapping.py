@@ -10,21 +10,6 @@ ROOM_WIDTH = 25
 ROOM_DEPTH = 25
 FEET_TO_METERS = 0.3048
 
-def map_to_3d(x, y, bbox, scale=1.0, z_value=0.0):
-    """
-    x, y         : original GeoJSON coordinates
-    bbox         : bounding box (min_x, max_x, min_y, max_y)
-    scale        : meters per unit in the GeoJSON
-    z_value      : height in meters (default 0 for ground)
-    """
-    min_x, max_x, min_y, max_y = bbox
-
-    x_trans = (x - min_x) * scale
-    y_trans = (y - min_y) * scale
-
-    z_trans = z_value
-    print(x_trans, y_trans, z_trans)
-    return x_trans, y_trans, z_trans
 
 def get_bbox(parsed_geojson):
     xs, ys = [], []
