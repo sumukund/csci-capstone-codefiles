@@ -24,67 +24,15 @@ import numpy as np
 import mapping
 import matplotlib.pyplot as plt
 import math
+import keyboard 
 
-def plot_points(map_points, positions):
-    xs = [f['geometry']['coordinates'][0] for f in map_points['features']]
-    ys = [f['geometry']['coordinates'][1] for f in map_points['features']]
-
-    px = [p[0] for p in positions]
-    py = [p[1] for p in positions]
-
-    plt.scatter(xs, ys, label="Map Points")
-    plt.scatter(px, py, label="People", marker='x')
-
-    plt.legend()
-    plt.title("Debug View")
-    plt.show()
-def intersection(map_points, positions, radius=0.5):
-    triggered = []
-
-    px, py, pz = positions[0], positions[1], positions[2]
-
-    for feature in map_points['features']:
-        fx, fy, fz = feature['geometry']['coordinates']
-
-        # Euclidean distance
-        dist = math.sqrt(
-            (px - fx)**2 +
-            (py - fy)**2 +
-            (pz - fz)**2
-        )
-
-        if dist <= radius:
-            props = feature.get('properties', {})
-
-            triggered.append({
-                "position": positions,
-                "distance": dist,
-                "image": props.get("image"),
-                "audio": props.get("audio")
-            })
-
-    return triggered
-
-def fake_body_positions():
-    return [
-        [0.5, 0.5, 0],
-        [1.0, 1.0, 3],
-        [2.0, 2.0, 6],
-        [2.798, 2.798, 0.0],
-    ]
+import json
+import os
     
 def main():
-    map_points = mapping.return_3d_points(use_dummy=False)
-
-    # dummy_positions = fake_body_positions()
-
-    # print("\nTesting intersections:\n")
-
-    # for pos in dummy_positions:
-    #     print(f"Person at: {pos}") 
-        
     # Create a Camera object
     zed = sl.Camera()
+    filename = "triggered.json"
 
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
@@ -94,8 +42,6 @@ def main():
     init_params.sdk_verbose = 1
     print(f"init param {init_params.camera_resolution}")
     # Open the camera
-    
-    breakpoint()
     err = zed.open(init_params)
     if err > sl.ERROR_CODE.SUCCESS:
         print("Camera Open : "+repr(err)+". Exit program.")
@@ -129,11 +75,40 @@ def main():
     body_runtime_param = sl.BodyTrackingRuntimeParameters()
     # For outdoor scene or long range, the confidence should be lowered to avoid missing detections (~20-30)
     # For indoor scene or closer range, a higher confidence limits the risk of false positives and increase the precision (~50+)
-    body_runtime_param.detection_confidence_threshold = 40
-    i = 0 
-    while i < 400:
+    body_runtime_param.detection_confidence_threshold = 60
+    image = sl.Mat()
+    pose = sl.Pose()
+    depth_map = sl.Mat()
+    runtime_parameters = sl.RuntimeParameters()
+   
+    while True:
+        if keyboard.is_pressed('q'):  # if key 'q' is pressed 
+            print('You Pressed A Key!')
+            break  # finishing the loop
         if zed.grab() <= sl.ERROR_CODE.SUCCESS:
             err = zed.retrieve_bodies(bodies, body_runtime_param)
+                        # Retrieve left image
+            zed.retrieve_image(image, sl.VIEW.LEFT)
+            # Convert to numpy
+            frame = image.get_data()
+
+            # Convert BGRA → BGR (IMPORTANT)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+
+            # Show image
+            cv2.imshow("ZED Camera", frame)
+
+            # Exit on 'q'
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+            # Draw map points
+            # Optional: draw lines
+            print("Pose", zed.get_position(pose, sl.REFERENCE_FRAME.WORLD))
+            origin = pose.get_translation().get()  # [x, y, z]
+            print("Map origin:", origin)
+            map_scaled, points_array = mapping.return_3d_points(origin, use_dummy=False)        
+
+                      
             if bodies.is_new:
                 body_array = bodies.body_list
                 print(str(len(body_array)) + " Person(s) detected\n")
@@ -150,9 +125,28 @@ def main():
                     print(" 3D position: [{0},{1},{2}]\n Velocity: [{3},{4},{5}]\n 3D dimentions: [{6},{7},{8}]".format(
                         position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
                         dimensions[1], dimensions[2]))
-                    triggered = intersection(map_points, position)
-                    print(triggered)
-                    break
+                    triggered = mapping.intersection(map_scaled, position)
+
+
+                    new_entry = {
+                        "triggered": triggered,
+                        "position": position.tolist(),  # <-- convert ndarray to list
+                    }
+
+
+                    # Load existing data if file exists
+                    if os.path.exists(filename):
+                        with open(filename, "r") as file:
+                            data = json.load(file)
+                    else:
+                        data = []
+
+                    # Append new entry
+                    data.append(new_entry)
+
+                    # Save back
+                    with open(filename, "w") as file:
+                        json.dump(data, file, indent=4)
                     if first_body.mask.is_init():
                         print(" 2D mask available")
 
@@ -165,11 +159,9 @@ def main():
                     
                     # for it in keypoint:
                     #     print("    " + str(it))
-        i+=1
     # Close the camera
     zed.disable_body_tracking()
     zed.close()
-
 
 if __name__ == "__main__":
     main()
