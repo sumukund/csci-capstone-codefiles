@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "audio": "song2.mp3" },
       "geometry": {
         "coordinates": [-93.2204767326635, 44.94870784872086],
         "type": "Point"
@@ -11,7 +11,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "audio": "song3.mp3" },
       "geometry": {
         "coordinates": [-93.22936686293409, 44.9740123079913],
         "type": "Point"
@@ -35,7 +35,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "audio": "song2.mp3" },
       "geometry": {
         "coordinates": [-93.23617815745224, 44.96870567616088],
         "type": "Point"
@@ -43,7 +43,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "audio": "song3.mp3" },
       "geometry": {
         "coordinates": [-93.24848153806573, 44.97375989667657],
         "type": "Point"
@@ -51,7 +51,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "audio": "song2.mp3" },
       "geometry": {
         "coordinates": [-93.26616149923254, 44.9764441164582],
         "type": "Point"
