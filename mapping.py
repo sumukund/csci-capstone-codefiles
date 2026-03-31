@@ -48,7 +48,8 @@ def scale_to_camera_space(parsed_geojson, x_range=CAMERA_X_RANGE, z_range=CAMERA
         z_new = (z - min_z) * scale_z + z_range[0]
         scaled_features.append({
             'type': 'Feature',
-            'geometry': {'type': 'Point', 'coordinates': [x_new, z_new]}
+            'geometry': {'type': 'Point', 'coordinates': [x_new, z_new]},
+            'properties': feature['properties']
         })
     return {"type": "FeatureCollection", "features": scaled_features}
 

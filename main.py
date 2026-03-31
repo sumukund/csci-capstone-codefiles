@@ -25,7 +25,7 @@ import mapping
 import matplotlib.pyplot as plt
 import math
 import keyboard 
-
+import triggered_audio
 import json
 import os
     
@@ -125,7 +125,8 @@ def main():
                         position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
                         dimensions[1], dimensions[2]))
                     triggered = mapping.intersection(map_scaled, position)
-
+                    # Play audio based on triggered points
+                    triggered_audio.play_triggered_audio(triggered, radius=0.6)
 
                     new_entry = {
                         "triggered": triggered,
