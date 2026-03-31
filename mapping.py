@@ -91,12 +91,14 @@ def return_3d_points(map_origin, use_dummy=False):
     return scaled_map_3d, extract_points_array(scaled_map_3d)
 
 # ------------------- PLOTTING -------------------
-def plot_triggered_points(triggered_file="triggered.json"):
+# def plot_triggered_points(triggered_file="triggered.json"):
+def plot_triggered_points(triggered_json):
+
     map_origin = [ 0.03365466, -0.59217155,  0.06798545]
 
     map_points, _ = return_3d_points(map_origin)
-    with open(triggered_file, "r") as f:
-        data = json.load(f)
+    # with open(triggered_file, "r") as f:
+    data = triggered_json
     
     # Map points
     xs = [f['geometry']['coordinates'][0] for f in map_points['features']]
@@ -116,15 +118,17 @@ def plot_triggered_points(triggered_file="triggered.json"):
 # ------------------- INTERSECTION -------------------
 def intersection(map_points, positions, radius=0.6):
     triggered = []
-    px, py, pz = positions
+    px, _, pz = positions   # ignore Y
 
     for feature in map_points['features']:
-        fx, fy, fz = feature['geometry']['coordinates']
-        dist = math.sqrt((px - fx)**2 + (py - fy)**2 + (pz - fz)**2)
+        fx, _, fz = feature['geometry']['coordinates']  # ignore Y
+
+        dist = math.sqrt((px - fx)**2 + (pz - fz)**2)
+
         if dist <= radius:
             props = feature.get('properties', {})
             triggered.append({
-                "position": list(positions),
+                "position": [px, pz],  # optional: cleaner
                 "distance": dist,
                 "image": props.get("image"),
                 "audio": props.get("audio"),
