@@ -106,8 +106,7 @@ def main():
             print("Pose", zed.get_position(pose, sl.REFERENCE_FRAME.WORLD))
             origin = pose.get_translation().get()  # [x, y, z]
             print("Map origin:", origin)
-            map_scaled = mapping.return_3d_points(origin, use_dummy=False)        
-
+            map_scaled = mapping.return_camera_space_points(use_dummy=False)
                       
             if bodies.is_new:
                 body_array = bodies.body_list

@@ -1,12 +1,11 @@
 import json
 import math
 import matplotlib.pyplot as plt
-import cv2
 
 # ------------------- CONFIG -------------------
-RESOLUTION_WIDTH = 1080
-RESOLUTION_HEIGHT = 720
-ROOM_WIDTH_FEET = 10
+CAMERA_X_RANGE = (-2, 3)
+CAMERA_Z_RANGE = (2, 7)
+ROOM_WIDTH_FEET = 20
 ROOM_DEPTH_FEET = 25
 FEET_TO_METERS = 0.3048
 
@@ -19,76 +18,53 @@ def get_bbox(parsed_geojson):
     for feature in parsed_geojson['features']:
         geom = feature['geometry']
         if geom['type'] == 'Point':
-            x, z = geom['coordinates']  # treat y as z explicitly
+            x, z = geom['coordinates']
             xs.append(x)
             zs.append(z)
     return min(xs), max(xs), min(zs), max(zs)
-
-def compute_scale_to_room(bbox, room_width_m, room_depth_m, margin=0.5):
-    min_x, max_x, min_z, max_z = bbox
-    data_width = max_x - min_x
-    data_height = max_z - min_z
-    usable_width = room_width_m - margin
-    usable_depth = room_depth_m - margin
-    scale_x = usable_width / data_width
-    scale_z = usable_depth / data_height
-    return min(scale_x, scale_z)
-
-def map_to_3d(x, z, bbox, scale, map_origin):
-    min_x, max_x, min_z, max_z = bbox
-    # Map coordinates relative to origin
-    x_rel = x - min_x
-    z_rel = z - min_z
-    # Scale and offset by map origin
-    x3d = x_rel * scale + map_origin[0]
-    z3d = z_rel * scale + map_origin[2]
-    return x3d, z3d
 
 def create_dummy_geojson():
     return {
         "type": "FeatureCollection",
         "features": [
-            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0,0,0]}},
-            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [10,0, 0]}},
-            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [10, 0, 10]}},
-            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0, 0, 10]}},
-            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [5,0, 5]}}
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0,0]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [10,0]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [10,10]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0,10]}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [5,5]}}
         ]
     }
 
-# ------------------- MAP SCALING -------------------
-def scale_map_to_3d(map_origin, parsed_geojson, room_width_feet=ROOM_WIDTH_FEET, room_depth_feet=ROOM_DEPTH_FEET):
-    bbox = get_bbox(parsed_geojson)
-    room_width_m, room_depth_m = feet_to_meters(room_width_feet, room_depth_feet)
-    scale = compute_scale_to_room(bbox, room_width_m, room_depth_m)
+# ------------------- CAMERA SPACE SCALING -------------------
+def scale_to_camera_space(parsed_geojson, x_range=CAMERA_X_RANGE, z_range=CAMERA_Z_RANGE):
+    min_x, max_x, min_z, max_z = get_bbox(parsed_geojson)
+    scale_x = (x_range[1] - x_range[0]) / (max_x - min_x)
+    scale_z = (z_range[1] - z_range[0]) / (max_z - min_z)
 
     scaled_features = []
     for feature in parsed_geojson['features']:
-        if feature['geometry']['type'] == 'Point':
-            x, z = feature['geometry']['coordinates']
-            x3d, z3d = map_to_3d(x, z, bbox, scale, map_origin)
-            scaled_features.append({
-                'type': 'Feature',
-                'geometry': {'type': 'Point', 'coordinates': [x3d, z3d]}
-            })
-
+        x, z = feature['geometry']['coordinates']
+        x_new = (x - min_x) * scale_x + x_range[0]
+        z_new = (z - min_z) * scale_z + z_range[0]
+        scaled_features.append({
+            'type': 'Feature',
+            'geometry': {'type': 'Point', 'coordinates': [x_new, z_new]}
+        })
     return {"type": "FeatureCollection", "features": scaled_features}
 
-def return_3d_points(map_origin, use_dummy=False):
+def return_camera_space_points(use_dummy=False):
     if use_dummy:
         parsed_geojson = create_dummy_geojson()
     else:
         with open("map.geojson", 'r') as file:
             parsed_geojson = json.load(file)
-    scaled_map_3d = scale_map_to_3d(map_origin, parsed_geojson)
-    return scaled_map_3d
+    camera_space_map = scale_to_camera_space(parsed_geojson)
+    return camera_space_map
 
 # ------------------- PLOTTING -------------------
 def plot_triggered_points(triggered_file="triggered.json"):
-
-    map_origin = [-0.01063531, -0.31656182, -0.02599882]
-
-    map_points = return_3d_points(map_origin)
+    map_points = return_camera_space_points()
+    
     with open(triggered_file, "r") as f:
         data = json.load(f)
     
@@ -104,7 +80,7 @@ def plot_triggered_points(triggered_file="triggered.json"):
     plt.scatter(xs, zs, label="Map Points")
     plt.scatter(px, pz, c=colors, marker='x', label="People (red=triggered)")
     plt.legend()
-    plt.title("Debug View")
+    plt.title("Debug View (Camera Space)")
     plt.show()
 
 # ------------------- INTERSECTION -------------------
@@ -113,14 +89,12 @@ def intersection(map_points, positions, radius=0.6):
     px, _, pz = positions   # ignore Y
     
     for feature in map_points['features']:
-        fx, fz = feature['geometry']['coordinates']  # ignore Y
-
+        fx, fz = feature['geometry']['coordinates']
         dist = math.sqrt((px - fx)**2 + (pz - fz)**2)
-
         if dist <= radius:
             props = feature.get('properties', {})
             triggered.append({
-                "position": [px, pz],  # optional: cleaner
+                "position": [px, pz],
                 "distance": dist,
                 "image": props.get("image"),
                 "audio": props.get("audio"),

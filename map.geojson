@@ -19,7 +19,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {"audio": "song.mp3"},
       "geometry": {
         "coordinates": [-93.22049001420694, 44.94806513837378],
         "type": "Point"
@@ -27,7 +27,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {"audio": "song.mp3"},
       "geometry": {
         "coordinates": [-93.27801365208194, 44.955092243219696],
         "type": "Point"
@@ -59,7 +59,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {"audio": "song.mp3"},
       "geometry": {
         "coordinates": [-93.2537303155663, 44.980726353247064],
         "type": "Point"
