@@ -18,18 +18,18 @@
 #
 ########################################################################
 
-import json 
-import triggered_audio
+
+import winsound
 
 def main():
-    with open("triggered.json") as f: 
-        data = json.load(f)
-        
-        for datapoint in data: 
-           triggered_audio.play_triggered_audio(datapoint)
-           
-                
-                
+
+    # Play Windows exit sound.
+    winsound.PlaySound("SystemExit", winsound.SND_ALIAS)
+
+    # Probably play Windows default sound, if any is registered (because
+    # "*" probably isn't the registered name of any sound).
+    winsound.PlaySound("*", winsound.SND_ALIAS)
+                    
 
 if __name__ == "__main__":
     main()
