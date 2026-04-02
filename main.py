@@ -129,8 +129,8 @@ def main():
                     new_entry = {
                         "triggered": triggered,
                         "position": position.tolist(),
+                        "velocity" : velocity.tolist(),
                     }
-
 
                     # Load existing data if file exists
                     if os.path.exists(filename):
@@ -142,22 +142,10 @@ def main():
                     data.append(new_entry)
                     print(f"triggered: {triggered}")
                     # Play audio based on triggered points
-                    triggered_audio.play_triggered_audio(new_entry)
-                    # Save back
+                    triggered_audio.play_triggered_audio(new_entry)                    
                     with open(filename, "w") as file:
                         json.dump(data, file, indent=4)
-                    if first_body.mask.is_init():
-                        print(" 2D mask available")
 
-                    print(" Keypoint 2D ")
-                    keypoint_2d = first_body.keypoint_2d
-                    # for it in keypoint_2d:
-                    #     print("    " + str(it))
-                    print("\n Keypoint 3D ")
-                    keypoint = first_body.keypoint
-                    
-                    # for it in keypoint:
-                    #     print("    " + str(it))
     # Close the camera
     zed.disable_body_tracking()
     zed.close()

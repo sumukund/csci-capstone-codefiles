@@ -1,40 +1,51 @@
 from pygame import mixer
+import time
 
 mixer.init()
+mixer.set_num_channels(16)
+current_track = None
+start_time = 0
+paused_pos = {}  
 
-# Cache loaded sounds + channels
-playing = {}
 
 def play_triggered_audio(point):
-    global playing
+    global current_track, start_time, paused_pos
 
-    active_files = set()
-    if point['triggered'] == []: 
-        print("no audio")
+    if not point['triggered']:
+        if current_track is not None:
+            elapsed = time.time() - start_time
+            paused_pos[current_track] = elapsed
+
+            print(f"PAUSE {current_track} at {elapsed:.2f}s")
+
+            mixer.music.stop()
+            current_track = None
         return
-    else: 
-        dist = point['triggered'][0]['distance']
-        print(dist)
-        audio_file = point['triggered'][0]['audio']
 
-        # Smooth volume curve (feels more natural than linear)
-        volume = max(0.0, min(1.0, (1 - dist / 0.6) ** 2 ))
+    trigger = point['triggered'][0]
+    audio_file = trigger['audio']
+    dist = trigger['distance']
 
-        # Start sound if not already playing
-        if audio_file not in playing:
-            breakpoint()
-            sound = mixer.Sound(audio_file)
-            channel = sound.play(loops=-1)
-            playing[audio_file] = {
-                "sound": sound,
-                "channel": channel
-            }
+    volume = max(0.0, min(1.0, (1 - dist / 0.6) ** 2))
+    mixer.music.set_volume(volume)
 
-        # Update volume every frame
-        playing[audio_file]["channel"].set_volume(volume)
+    if current_track == audio_file:
+        
+        return
 
-    # # Stop sounds that are no longer in range
-    # for audio_file in list(playing.keys()):
-    #     if audio_file not in active_files:
-    #         playing[audio_file]["channel"].stop()
-    #         del playing[audio_file]
+    if current_track is not None:
+        elapsed = time.time() - start_time
+        paused_pos[current_track] = elapsed
+        print(f"SWITCH PAUSE {current_track} at {elapsed:.2f}s")
+
+    # Start/resume new track
+    start_pos = paused_pos.get(audio_file, 0)
+
+    print(f"PLAY {audio_file} from {start_pos:.2f}s")
+
+    mixer.music.load(audio_file)
+    mixer.music.play(start=start_pos)
+
+    current_track = audio_file
+    start_time = time.time() - start_pos
+

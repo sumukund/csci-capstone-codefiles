@@ -17,19 +17,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 ########################################################################
-
-
-import winsound
-
+import triggered_audio
+import json
+import time
 def main():
+    with open("triggered.json") as f:
+        frames = json.load(f)
 
-    # Play Windows exit sound.
-    winsound.PlaySound("SystemExit", winsound.SND_ALIAS)
-
-    # Probably play Windows default sound, if any is registered (because
-    # "*" probably isn't the registered name of any sound).
-    winsound.PlaySound("*", winsound.SND_ALIAS)
-                    
-
+    FPS = 2
+    
+    for frame in frames:
+        print("FRAME:", frame["triggered"])
+        triggered_audio.play_triggered_audio(frame)
+        time.sleep(1 / FPS)
 if __name__ == "__main__":
     main()

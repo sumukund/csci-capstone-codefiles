@@ -99,6 +99,7 @@ def intersection(map_points, positions, radius=0.6):
                 "distance": dist,
                 "image": props.get("image"),
                 "audio": props.get("audio"),
+                "id": props.get("id"),
                 "triggered": True
             })
     return triggered
