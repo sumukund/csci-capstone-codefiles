@@ -1,5 +1,8 @@
 from pygame import mixer
 import time
+from pydub import AudioSegment
+from pydub.playback import play
+
 
 mixer.init()
 mixer.set_num_channels(16)
@@ -23,14 +26,17 @@ def play_triggered_audio(point):
         return
 
     trigger = point['triggered'][0]
-    audio_file = trigger['audio']
+    audio_file = f"songs/{trigger['audio']}"
     dist = trigger['distance']
 
     volume = max(0.0, min(1.0, (1 - dist / 0.6) ** 2))
     mixer.music.set_volume(volume)
-
+    
+    # audio = AudioSegment.from_file(audio_file, sample_width=2, 
+    # frame_rate=44100, 
+    # channels=2)
+    
     if current_track == audio_file:
-        
         return
 
     if current_track is not None:
@@ -45,6 +51,11 @@ def play_triggered_audio(point):
 
     mixer.music.load(audio_file)
     mixer.music.play(start=start_pos)
+    # Slice the audio from the start_time to the end
+    # segment_to_play = audio[start_pos:]
+
+    # Play the sliced segment
+    # play(segment_to_play)
 
     current_track = audio_file
     start_time = time.time() - start_pos

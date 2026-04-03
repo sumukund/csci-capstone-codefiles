@@ -20,12 +20,13 @@
 import triggered_audio
 import json
 import time
+
 def main():
     with open("triggered.json") as f:
         frames = json.load(f)
 
     FPS = 2
-    
+      
     for frame in frames:
         print("FRAME:", frame["triggered"])
         triggered_audio.play_triggered_audio(frame)

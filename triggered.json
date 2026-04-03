@@ -1,434 +1,520 @@
 [
-    {
-        "triggered": [],
-        "position": [
-            1.2229260206222534,
-            -0.34467244148254395,
-            2.057502031326294
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2946228981018066,
-            -0.33981093764305115,
-            2.077526092529297
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.34213125705719,
-            -0.33517780900001526,
-            2.1481640338897705
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.3332951068878174,
-            -0.33855149149894714,
-            2.208012104034424
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.3621225357055664,
-            -0.3231523931026459,
-            2.213937520980835
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.367404818534851,
-            -0.333082377910614,
-            2.2671189308166504
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.361958622932434,
-            -0.336066335439682,
-            2.3316876888275146
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.3460204601287842,
-            -0.35504454374313354,
-            2.3641440868377686
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.3241467475891113,
-            -0.3633502423763275,
-            2.489612102508545
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.3257731199264526,
-            -0.37432390451431274,
-            2.6403346061706543
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.3161003589630127,
-            -0.38568025827407837,
-            2.763357639312744
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.3018889427185059,
-            -0.4141111373901367,
-            2.955904960632324
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2865153551101685,
-            -0.42016997933387756,
-            2.998166561126709
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2669622898101807,
-            -0.4262271821498871,
-            3.029100179672241
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.251201868057251,
-            -0.4400990307331085,
-            3.0577759742736816
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2435505390167236,
-            -0.4518877863883972,
-            3.091359853744507
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.241224765777588,
-            -0.4616372585296631,
-            3.14048171043396
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2353755235671997,
-            -0.47064515948295593,
-            3.195253610610962
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2332651615142822,
-            -0.47899433970451355,
-            3.245950222015381
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2393602132797241,
-            -0.48622429370880127,
-            3.2946739196777344
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.236861228942871,
-            -0.49348241090774536,
-            3.3451194763183594
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2381480932235718,
-            -0.49971646070480347,
-            3.3958563804626465
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.234743595123291,
-            -0.5060511231422424,
-            3.445218086242676
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2306874990463257,
-            -0.5124207139015198,
-            3.4943652153015137
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.226836919784546,
-            -0.5188195705413818,
-            3.542506694793701
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2167167663574219,
-            -0.5259578824043274,
-            3.591261386871338
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2084012031555176,
-            -0.5323361158370972,
-            3.6289470195770264
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.2006735801696777,
-            -0.5382094979286194,
-            3.6627323627471924
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.1868188381195068,
-            -0.543651282787323,
-            3.695371627807617
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.1805171966552734,
-            -0.5487233400344849,
-            3.728672742843628
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.1722142696380615,
-            -0.5576592683792114,
-            3.7592780590057373
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.1523046493530273,
-            -0.5646617412567139,
-            3.8017706871032715
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.1382367610931396,
-            -0.5665627717971802,
-            3.852402687072754
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.121579885482788,
-            -0.5725942850112915,
-            3.904709815979004
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.1003848314285278,
-            -0.5799965858459473,
-            3.9541730880737305
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.048893928527832,
-            -0.5921565294265747,
-            4.015655994415283
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            1.0050193071365356,
-            -0.6048585176467896,
-            4.076334476470947
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.9622867703437805,
-            -0.6184118986129761,
-            4.128168106079102
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.9247878789901733,
-            -0.6316741704940796,
-            4.175093173980713
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.9060283899307251,
-            -0.6416913270950317,
-            4.222576141357422
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.8939404487609863,
-            -0.6507851481437683,
-            4.263774871826172
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.8848485946655273,
-            -0.6593018770217896,
-            4.301677703857422
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.8750358819961548,
-            -0.6678332090377808,
-            4.337201118469238
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.8643742799758911,
-            -0.6750109791755676,
-            4.373683929443359
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.8474617004394531,
-            -0.6831358075141907,
-            4.411748886108398
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.8309361934661865,
-            -0.6907945871353149,
-            4.453258514404297
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.8144006729125977,
-            -0.6978360414505005,
-            4.495741844177246
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.7980456948280334,
-            -0.7049306035041809,
-            4.53846549987793
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.7814629077911377,
-            -0.7118554711341858,
-            4.581756591796875
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.7649636268615723,
-            -0.718366265296936,
-            4.626344680786133
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.7647552490234375,
-            -0.722082257270813,
-            4.663307189941406
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.7646368741989136,
-            -0.7259016036987305,
-            4.692410469055176
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.7644064426422119,
-            -0.7295230031013489,
-            4.714661598205566
-        ]
-    },
-    {
-        "triggered": [],
-        "position": [
-            0.7643139362335205,
-            -0.7330585718154907,
-            4.7309136390686035
-        ]
-    }
+  { "triggered": [], "position": [0, 0, 0] },
+  { "triggered": [], "position": [0, 0, 0] },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.55,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [0.8, 0, 1.8]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.4,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [0.9, 0, 1.9]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.25,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.22,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.35,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.1, 0, 2.1]
+  },
+  { "triggered": [], "position": [2, 0, 3] },
+  { "triggered": [], "position": [3, 0, 4] },
+  { "triggered": [], "position": [3, 0, 4] },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.3,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.15,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.3,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.2, 0, 1.8]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [3, 1],
+        "distance": 0.1,
+        "image": null,
+        "audio": "song2.ogg",
+        "id": 2,
+        "triggered": true
+      }
+    ],
+    "position": [3.0, 0, 1.0]
+  },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.3,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.15,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [1.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.2,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.8,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.004,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.7,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.7,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.0, 0, 2.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [1, 2],
+        "distance": 0.776,
+        "image": null,
+        "audio": "time_bomb_isolated.ogg",
+        "id": 1,
+        "triggered": true
+      }
+    ],
+    "position": [2.2, 0, 1.8]
+  },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  { "triggered": [], "position": [4, 0, 0] },
+  {
+    "triggered": [
+      {
+        "position": [5, -1],
+        "distance": 0.4,
+        "image": null,
+        "audio": "song3.ogg",
+        "id": 3,
+        "triggered": true
+      }
+    ],
+    "position": [4.8, 0, -0.8]
+  },
+  {
+    "triggered": [
+      {
+        "position": [5, -1],
+        "distance": 0.2,
+        "image": null,
+        "audio": "song3.ogg",
+        "id": 3,
+        "triggered": true
+      }
+    ],
+    "position": [5.0, 0, -1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [5, -1],
+        "distance": 0.15,
+        "image": null,
+        "audio": "song3.ogg",
+        "id": 3,
+        "triggered": true
+      }
+    ],
+    "position": [5.0, 0, -1.0]
+  },
+  {
+    "triggered": [
+      {
+        "position": [5, -1],
+        "distance": 0.18,
+        "image": null,
+        "audio": "song3.ogg",
+        "id": 3,
+        "triggered": true
+      }
+    ],
+    "position": [5.0, 0, -1.0]
+  },
+  { "triggered": [], "position": [0, 0, 0] },
+  { "triggered": [], "position": [0, 0, 0] }
 ]
