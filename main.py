@@ -105,11 +105,12 @@ def main():
                         position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
                         dimensions[1], dimensions[2]))
                     triggered = mapping.intersection(map_scaled, position)
-
+                    speed = mapping.get_speed(velocity.tolist())
                     new_entry = {
                         "triggered": triggered,
                         "position": position.tolist(),
                         "velocity" : velocity.tolist(),
+                        "speed": speed
                     }
 
                     # Load existing data if file exists
@@ -122,6 +123,7 @@ def main():
                     data.append(new_entry)
                     print(f"triggered: {triggered}")
                     # Play audio based on triggered points
+
                     triggered_audio.play_triggered_audio(new_entry)                    
                     with open(filename, "w") as file:
                         json.dump(data, file, indent=4)

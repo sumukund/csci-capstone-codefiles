@@ -4,7 +4,7 @@
     {
       "type": "Feature",
       "id": 1,
-      "properties": { "audio": "song2.ogg" },
+      "properties": { "audio": "time_bomb_isolated.wav" },
       "geometry": {
         "coordinates": [-93.2204767326635, 44.94870784872086],
         "type": "Point"
@@ -13,7 +13,7 @@
     {
       "type": "Feature",
       "id": 2,
-      "properties": { "audio": "song3.ogg" },
+      "properties": { "audio": "song.wav" },
       "geometry": {
         "coordinates": [-93.22936686293409, 44.9740123079913],
         "type": "Point"
@@ -22,7 +22,7 @@
     {
       "type": "Feature",
       "id": 3,
-      "properties": { "audio": "song.ogg" },
+      "properties": { "audio": "song.wav" },
       "geometry": {
         "coordinates": [-93.22049001420694, 44.94806513837378],
         "type": "Point"
@@ -31,7 +31,7 @@
     {
       "type": "Feature",
       "id": 4,
-      "properties": { "audio": "song.ogg" },
+      "properties": { "audio": "song.wav" },
       "geometry": {
         "coordinates": [-93.27801365208194, 44.955092243219696],
         "type": "Point"
@@ -40,7 +40,7 @@
     {
       "type": "Feature",
       "id": 5,
-      "properties": { "audio": "song2.ogg" },
+      "properties": { "audio": "time_bomb_isolated.wav" },
       "geometry": {
         "coordinates": [-93.23617815745224, 44.96870567616088],
         "type": "Point"
@@ -49,7 +49,7 @@
     {
       "type": "Feature",
       "id": 6,
-      "properties": { "audio": "song3.ogg" },
+      "properties": { "audio": "song2.wav" },
       "geometry": {
         "coordinates": [-93.24848153806573, 44.97375989667657],
         "type": "Point"
@@ -58,7 +58,7 @@
     {
       "type": "Feature",
       "id": 7,
-      "properties": { "audio": "song2.ogg" },
+      "properties": { "audio": "song2.wav" },
       "geometry": {
         "coordinates": [-93.26616149923254, 44.9764441164582],
         "type": "Point"
@@ -67,7 +67,7 @@
     {
       "type": "Feature",
       "id": 8,
-      "properties": { "audio": "time_bomb_isolated.ogg" },
+      "properties": { "audio": "time_bomb_isolated.wav" },
       "geometry": {
         "coordinates": [-93.2537303155663, 44.980726353247064],
         "type": "Point"

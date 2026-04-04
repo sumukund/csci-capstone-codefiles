@@ -103,3 +103,8 @@ def intersection(map_points, positions, radius=0.6):
                 "triggered": True
             })
     return triggered
+
+
+def get_speed(velocity):
+    x, y, z = velocity
+    return math.sqrt(x*x + y*y + z*z)
