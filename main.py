@@ -10,11 +10,16 @@ import keyboard
 import triggered_audio
 import json
 import os
-    
+from collections import deque
+  
 def main():
     # Create a Camera object
     zed = sl.Camera()
     filename = "triggered.json"
+
+    # velocity buffer 
+    
+    velocity_history = deque(maxlen=100)
 
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
@@ -61,7 +66,8 @@ def main():
     body_runtime_param.detection_confidence_threshold = 60
     image = sl.Mat()
     pose = sl.Pose()
-   
+    
+
     while True:
         if keyboard.is_pressed('q'):  # if key 'q' is pressed 
             print('You Pressed A Key!')
@@ -82,58 +88,61 @@ def main():
             # Exit on 'q'
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-            # Draw map points
-            # Optional: draw lines
+            
+            # initialization
+            
             print("Pose", zed.get_position(pose, sl.REFERENCE_FRAME.WORLD))
             origin = pose.get_translation().get()  # [x, y, z]
             print("Map origin:", origin)
-            map_scaled = mapping.return_camera_space_points(use_dummy=False)
-                      
-            if bodies.is_new:
-                body_array = bodies.body_list
-                print(str(len(body_array)) + " Person(s) detected\n")
-                if len(body_array) > 0:
-                    first_body = body_array[0]
-                    print("First Person attributes:")
-                    print(" Confidence (" + str(int(first_body.confidence)) + "/100)")
-                    if body_params.enable_tracking:
-                        print(" Tracking ID: " + str(int(first_body.id)) + " tracking state: " + repr(
-                            first_body.tracking_state) + " / " + repr(first_body.action_state))
-                    position = first_body.position
-                    velocity = first_body.velocity
-                    dimensions = first_body.dimensions
-                    # HEAD index (works for BODY_18 and BODY_34)
-                    keypoints = first_body.keypoint
-                    head_pos = keypoints[HEAD_INDEX]
+            if origin:    
+                # Draw map points
+                map_scaled = mapping.return_camera_space_points(use_dummy=False)
+                if bodies.is_new:
+                    body_array = bodies.body_list
+                    print(str(len(body_array)) + " Person(s) detected\n")
+                    if len(body_array) > 0:
+                        first_body = body_array[0]
+                        print("First Person attributes:")
+                        print(" Confidence (" + str(int(first_body.confidence)) + "/100)")
+                        if body_params.enable_tracking:
+                            print(" Tracking ID: " + str(int(first_body.id)) + " tracking state: " + repr(
+                                first_body.tracking_state) + " / " + repr(first_body.action_state))
+                        position = first_body.position
+                        velocity = first_body.velocity
+                        velocity_buffer = mapping.hold_velocity_buffer(velocity_history, velocity)
+                        
+                        dimensions = first_body.dimensions
+                        # HEAD index (works for BODY_18 and BODY_34)
+                        keypoints = first_body.keypoint
+                        head_pos = keypoints[HEAD_INDEX]
 
-                    print(" 3D position: [{0},{1},{2}]\n Velocity: [{3},{4},{5}]\n 3D dimentions: [{6},{7},{8}]".format(
-                        position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
-                        dimensions[1], dimensions[2]))
-                    triggered = mapping.intersection(map_scaled, position)
-                    speed = mapping.get_speed(velocity.tolist())
-                    new_entry = {
-                        "triggered": triggered,
-                        "position": position.tolist(),
-                        "velocity" : velocity.tolist(),
-                        "dimensions": dimensions.tolist(),
-                        "speed": speed,
-                        "head_position": head_pos.tolist(),                    
-                        }
+                        print(" 3D position: [{0},{1},{2}]\n Velocity: [{3},{4},{5}]\n 3D dimentions: [{6},{7},{8}]".format(
+                            position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
+                            dimensions[1], dimensions[2]))
+                        triggered = mapping.intersection(map_scaled, position)
+                        acceleration = mapping.get_acceleration(velocity_buffer)
+                        new_entry = {
+                            "triggered": triggered,
+                            "position": position.tolist(),
+                            "acceleration" : acceleration,
+                            "dimensions": dimensions.tolist(),
+                            "head_position": head_pos.tolist(),                    
+                            }
 
-                    # Load existing data if file exists
-                    if os.path.exists(filename):
-                        with open(filename, "r") as file:
-                            data = json.load(file)
-                    else:
-                        data = []
-                    # Append new entry
-                    data.append(new_entry)
-                    print(f"triggered: {triggered}")
-                    # Play audio based on triggered points
-
-                    triggered_audio.play_triggered_audio(new_entry)                    
-                    with open(filename, "w") as file:
-                        json.dump(data, file, indent=4)
+                        # Load existing data if file exists
+                        if os.path.exists(filename):
+                            with open(filename, "r") as file:
+                                data = json.load(file)
+                        else:
+                            data = []
+                        # Append new entry
+                        data.append(new_entry)
+                        print(f"triggered: {triggered}")
+                        # Play audio based on triggered points
+                        triggered_audio.play_triggered_audio(new_entry)  
+                                        
+                        with open(filename, "w") as file:
+                            json.dump(data, file, indent=4)
 
     # Close the camera
     zed.disable_body_tracking()

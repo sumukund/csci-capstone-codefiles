@@ -1,7 +1,7 @@
 import json
 import math
 import matplotlib.pyplot as plt
-
+import time
 # ------------------- CONFIG -------------------
 CAMERA_X_RANGE = (-2, 3)
 CAMERA_Z_RANGE = (2, 7)
@@ -84,7 +84,7 @@ def plot_triggered_points(triggered_file="triggered.json"):
     plt.title("Debug View (Camera Space)")
     plt.show()
 
-def intersection(map_points, positions, radius=0.4):
+def intersection(map_points, positions, radius=2.0):
     triggered = []
     px, _, pz = positions   # ignore Y
     
@@ -105,6 +105,26 @@ def intersection(map_points, positions, radius=0.4):
     return triggered
 
 
-def get_speed(velocity):
-    x, y, z = velocity
-    return math.sqrt(x*x + y*y + z*z)
+def hold_velocity_buffer(velocity_buffer, instant_velocity):
+
+    velocity_buffer.append((instant_velocity.tolist(), time.time()))
+    return velocity_buffer 
+
+
+def get_acceleration(velocity_buffer):
+    if len(velocity_buffer) < 2:
+        return 0.0
+
+    (v_old, t_old) = velocity_buffer[0]
+    (v_new, t_new) = velocity_buffer[-1]
+
+    dt = t_new - t_old
+    if dt == 0:
+        return 0.0
+
+    dx = (v_new[0] - v_old[0]) / dt
+    dy = (v_new[1] - v_old[1]) / dt
+    dz = (v_new[2] - v_old[2]) / dt
+
+    return math.sqrt(dx*dx + dy*dy + dz*dz)
+

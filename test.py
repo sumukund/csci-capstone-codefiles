@@ -20,16 +20,26 @@
 import triggered_audio
 import json
 import time
-
+import mapping 
+from collections import deque
 def main():
     with open("triggered.json") as f:
         frames = json.load(f)
 
-    FPS = 2
-      
+    FPS = 10
+    velocity_history = deque(maxlen=100)
+    dt = 1 / FPS
+    current_time = 0
+    engine = triggered_audio.AudioEngine()
+
     for frame in frames:
         print("FRAME:", frame["triggered"])
-        triggered_audio.play_triggered_audio(frame)
+        velocity_history.append((frame['velocity'], current_time))
+        acceleration = mapping.get_acceleration(velocity_history)
+        print(acceleration)
         time.sleep(1 / FPS)
+        current_time += dt
+
+        engine.update(frame, acceleration)
 if __name__ == "__main__":
     main()
