@@ -84,8 +84,7 @@ def plot_triggered_points(triggered_file="triggered.json"):
     plt.title("Debug View (Camera Space)")
     plt.show()
 
-# ------------------- INTERSECTION -------------------
-def intersection(map_points, positions, radius=0.6):
+def intersection(map_points, positions, radius=0.4):
     triggered = []
     px, _, pz = positions   # ignore Y
     
@@ -99,6 +98,7 @@ def intersection(map_points, positions, radius=0.6):
                 "distance": dist,
                 "image": props.get("image"),
                 "audio": props.get("audio"),
+                "emotional_layer": props.get("emotional_layer"),
                 "id": props.get("id"),
                 "triggered": True
             })

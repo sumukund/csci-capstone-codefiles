@@ -22,6 +22,8 @@ def main():
     init_params.depth_mode = sl.DEPTH_MODE.NEURAL
     init_params.coordinate_units = sl.UNIT.METER
     init_params.sdk_verbose = 1
+    HEAD_INDEX = 0  
+
     print(f"init param {init_params.camera_resolution}")
     # Open the camera
     err = zed.open(init_params)
@@ -33,12 +35,11 @@ def main():
 
     print(f"ZED camera resolution: {camera_info.camera_configuration.resolution.width} {camera_info.camera_configuration.resolution.height}")
     body_params = sl.BodyTrackingParameters()
-    # Different model can be chosen, optimizing the runtime or the accuracy
-    body_params.detection_model = sl.BODY_TRACKING_MODEL.HUMAN_BODY_FAST
-    body_params.enable_tracking = True
-    body_params.enable_segmentation = False
-    # Optimize the person joints position, requires more computations
-    body_params.enable_body_fitting = True
+    detection_parameters = sl.BodyTrackingParameters()
+    detection_parameters.detection_model = sl.BODY_TRACKING_MODEL.HUMAN_BODY_ACCURATE  
+    detection_parameters.enable_tracking = True
+    detection_parameters.enable_body_fitting = True
+    detection_parameters.body_format = sl.BODY_FORMAT.BODY_34
 
     if body_params.enable_tracking:
         positional_tracking_param = sl.PositionalTrackingParameters()
@@ -101,6 +102,10 @@ def main():
                     position = first_body.position
                     velocity = first_body.velocity
                     dimensions = first_body.dimensions
+                    # HEAD index (works for BODY_18 and BODY_34)
+                    keypoints = first_body.keypoint
+                    head_pos = keypoints[HEAD_INDEX]
+
                     print(" 3D position: [{0},{1},{2}]\n Velocity: [{3},{4},{5}]\n 3D dimentions: [{6},{7},{8}]".format(
                         position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
                         dimensions[1], dimensions[2]))
@@ -110,8 +115,10 @@ def main():
                         "triggered": triggered,
                         "position": position.tolist(),
                         "velocity" : velocity.tolist(),
-                        "speed": speed
-                    }
+                        "dimensions": dimensions.tolist(),
+                        "speed": speed,
+                        "head_position": head_pos.tolist(),                    
+                        }
 
                     # Load existing data if file exists
                     if os.path.exists(filename):
