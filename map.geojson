@@ -4,7 +4,12 @@
     {
       "type": "Feature",
       "id": 1,
-      "properties": { "audio": "time_bomb_isolated.wav", "emotional_layer": "song3.wav" },
+      "name": "Time Bomb Vintage",
+      "properties": {
+        "audio": "time_bomb_isolated.wav",
+        "emotional_layer": "time_bomb_emotional.wav", 
+        "image": "placeholder.jpeg"
+      },
       "geometry": {
         "coordinates": [-93.2204767326635, 44.94870784872086],
         "type": "Point"
@@ -13,7 +18,11 @@
     {
       "type": "Feature",
       "id": 2,
-      "properties": { "audio": "song.wav", "emotional_layer": "song3.wav" },
+      "name": "The Graduate",
+      "properties": {
+        "audio": "song.wav",
+        "emotional_layer": "song3.wav"
+      },
       "geometry": {
         "coordinates": [-93.22936686293409, 44.9740123079913],
         "type": "Point"
@@ -22,7 +31,11 @@
     {
       "type": "Feature",
       "id": 3,
-      "properties": { "audio": "song.wav", "emotional_layer": "song3.wav" },
+      "name": "Home",
+      "properties": {
+        "audio": "time_bomb_isolated.wav",
+        "emotional_layer": "time_bomb_emotional.wav"
+      },
       "geometry": {
         "coordinates": [-93.22049001420694, 44.94806513837378],
         "type": "Point"
@@ -31,7 +44,11 @@
     {
       "type": "Feature",
       "id": 4,
-      "properties": { "audio": "song.wav", "emotional_layer": "song3.wav" },
+      "name": "Alex Pretti Memorial",
+      "properties": {
+        "audio": "song.wav",
+        "emotional_layer": "song3.wav"
+      },
       "geometry": {
         "coordinates": [-93.27801365208194, 44.955092243219696],
         "type": "Point"
@@ -40,7 +57,11 @@
     {
       "type": "Feature",
       "id": 5,
-      "properties": { "audio": "time_bomb_isolated.wav", "emotional_layer": "song3.wav" },
+      "name": "River",
+      "properties": {
+        "audio": "time_bomb_isolated.wav",
+        "emotional_layer": "song3.wav"
+      },
       "geometry": {
         "coordinates": [-93.23617815745224, 44.96870567616088],
         "type": "Point"
@@ -49,7 +70,11 @@
     {
       "type": "Feature",
       "id": 6,
-      "properties": { "audio": "song2.wav", "emotional_layer": "song3.wav" },
+      "name": "Aarush Home and West Bank",
+      "properties": {
+        "audio": "song2.wav",
+        "emotional_layer": "song3.wav"
+      },
       "geometry": {
         "coordinates": [-93.24848153806573, 44.97375989667657],
         "type": "Point"
@@ -58,7 +83,11 @@
     {
       "type": "Feature",
       "id": 7,
-      "properties": { "audio": "song2.wav", "emotional_layer": "song3.wav"},
+      "name": "Government Plaza",
+      "properties": {
+        "audio": "song2.wav",
+        "emotional_layer": "song3.wav"
+      },
       "geometry": {
         "coordinates": [-93.26616149923254, 44.9764441164582],
         "type": "Point"
@@ -67,7 +96,11 @@
     {
       "type": "Feature",
       "id": 8,
-      "properties": { "audio": "time_bomb_isolated.wav", "emotional_layer": "song3.wav" },
+      "name": "Stone Arch Bridge",
+      "properties": {
+        "audio": "time_bomb_isolated.wav",
+        "emotional_layer": "song3.wav"
+      },
       "geometry": {
         "coordinates": [-93.2537303155663, 44.980726353247064],
         "type": "Point"
