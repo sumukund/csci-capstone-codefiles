@@ -47,10 +47,6 @@ def compute_illuminated_average(image_paths):
     avg = accum / count
     return np.uint8(avg)
 
-
-# -----------------------------
-# 3. RUN FOR ALL GROUPS
-# -----------------------------
 def process_all_groups(folder):
     groups = group_images(folder)
 

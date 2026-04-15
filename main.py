@@ -66,7 +66,8 @@ def main():
     body_runtime_param.detection_confidence_threshold = 60
     image = sl.Mat()
     pose = sl.Pose()
-    
+    engine = triggered_audio.AudioEngine()
+
 
     while True:
         if keyboard.is_pressed('q'):  # if key 'q' is pressed 
@@ -94,7 +95,7 @@ def main():
             print("Pose", zed.get_position(pose, sl.REFERENCE_FRAME.WORLD))
             origin = pose.get_translation().get()  # [x, y, z]
             print("Map origin:", origin)
-            if origin:    
+            if pose != "SEARCHING FLOOR PLANE":    
                 # Draw map points
                 map_scaled = mapping.return_camera_space_points(use_dummy=False)
                 if bodies.is_new:
@@ -139,8 +140,7 @@ def main():
                         data.append(new_entry)
                         print(f"triggered: {triggered}")
                         # Play audio based on triggered points
-                        triggered_audio.play_triggered_audio(new_entry)  
-                                        
+                        engine.update(new_entry, acceleration)                                        
                         with open(filename, "w") as file:
                             json.dump(data, file, indent=4)
 

@@ -127,7 +127,6 @@ class AudioEngine:
                 self.velocity_channel.fadeout(self.FADE_MS)
                 self.current_velocity_track = None
 
-    # ---------------- MAIN UPDATE ----------------
     def update(self, point, acceleration=0.0):
         # --- NO TRIGGER ---
         if not point.get("triggered"):
