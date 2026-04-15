@@ -119,7 +119,7 @@ class AudioEngine:
                 sound = self.get_sound(velocity_file)
                 if sound:
                     self.velocity_channel.play(sound, loops=-1, fade_ms=self.FADE_MS)
-                    self.velocity_channel.set_volume(0.7)
+                    self.velocity_channel.set_volume(0.6)
                     self.current_velocity_track = velocity_file
         else:
             if self.current_velocity_track is not None:
