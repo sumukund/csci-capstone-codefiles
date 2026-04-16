@@ -4,11 +4,14 @@ import matplotlib.pyplot as plt
 import time
 # ------------------- CONFIG -------------------
 CAMERA_X_RANGE = (-2, 3)
-CAMERA_Z_RANGE = (2, 7)
+CAMERA_Z_RANGE = (2, 10)
 ROOM_WIDTH_FEET = 20
 ROOM_DEPTH_FEET = 25
 FEET_TO_METERS = 0.3048
-
+last_head_y = None
+last_head_time = 0
+HEAD_TIMEOUT = 0.5  # seconds
+CAMERA_Y_RANGE = (0.3, 2.5)  # adjust to your setup
 # ------------------- UTILITIES -------------------
 def feet_to_meters(width_feet, depth_feet):
     return width_feet * FEET_TO_METERS, depth_feet * FEET_TO_METERS
@@ -35,6 +38,29 @@ def create_dummy_geojson():
         ]
     }
 
+# camera space scaling for 0 to 1 
+def camera_to_unit_space(camera_geojson, x_range=CAMERA_X_RANGE, z_range=CAMERA_Z_RANGE):
+    x_min, x_max = x_range
+    z_min, z_max = z_range
+
+    range_x = x_max - x_min
+    range_z = z_max - z_min
+
+    normalized_features = []
+    for feature in camera_geojson['features']:
+        x, z = feature['geometry']['coordinates']
+
+        x_norm = (x - x_min) / range_x
+        z_norm = (z - z_min) / range_z
+
+        normalized_features.append({
+            'type': 'Feature',
+            'geometry': {'type': 'Point', 'coordinates': [x_norm, z_norm]},
+            'properties': feature.get('properties', {})
+        })
+
+    return {"type": "FeatureCollection", "features": normalized_features}
+
 # ------------------- CAMERA SPACE SCALING -------------------
 def scale_to_camera_space(parsed_geojson, x_range=CAMERA_X_RANGE, z_range=CAMERA_Z_RANGE):
     min_x, max_x, min_z, max_z = get_bbox(parsed_geojson)
@@ -60,7 +86,8 @@ def return_camera_space_points(use_dummy=False):
         with open("map.geojson", 'r') as file:
             parsed_geojson = json.load(file)
     camera_space_map = scale_to_camera_space(parsed_geojson)
-    return camera_space_map
+    unit_space_map = camera_to_unit_space(camera_space_map)
+    return unit_space_map
 
 # ------------------- PLOTTING -------------------
 def plot_triggered_points(triggered_file="triggered.json"):
@@ -84,13 +111,23 @@ def plot_triggered_points(triggered_file="triggered.json"):
     plt.title("Debug View (Camera Space)")
     plt.show()
 
-def intersection(map_points, positions, radius=2.0):
+def intersection(map_points, positions, radius=0.2):
     triggered = []
-    px, _, pz = positions   # ignore Y
-    
+
+    px, _, pz = positions  # ignore Y
+
+    # normalize position into 0–1 space
+    x_min, x_max = CAMERA_X_RANGE
+    z_min, z_max = CAMERA_Z_RANGE
+
+    px = (px - x_min) / (x_max - x_min)
+    pz = (pz - z_min) / (z_max - z_min)
+
     for feature in map_points['features']:
         fx, fz = feature['geometry']['coordinates']
+
         dist = math.sqrt((px - fx)**2 + (pz - fz)**2)
+
         if dist <= radius:
             props = feature.get('properties', {})
             triggered.append({
@@ -99,9 +136,10 @@ def intersection(map_points, positions, radius=2.0):
                 "image": props.get("image"),
                 "audio": props.get("audio"),
                 "emotional_layer": props.get("emotional_layer"),
-                "id": props.get("id"),
+                "id": feature.get("id"),
                 "triggered": True
             })
+
     return triggered
 
 
@@ -128,3 +166,34 @@ def get_acceleration(velocity_buffer):
 
     return math.sqrt(dx*dx + dy*dy + dz*dz)
 
+def head_position_scaling(head_y):
+    global last_head_y, last_head_time
+
+    y_min, y_max = CAMERA_Y_RANGE
+
+    if head_y is not None and head_y == head_y:
+        last_head_y = head_y
+        last_head_time = time.time()
+    else:
+        # fallback to last known value
+        if last_head_y is not None and (time.time() - last_head_time < HEAD_TIMEOUT):
+            head_y = last_head_y
+        else:
+            return 0.5  # safe default
+
+    hy = (head_y - y_min) / (y_max - y_min)
+
+    hy = max(0.0, min(1.0, hy))
+
+    return float(hy)
+
+def body_position_scaling(position):
+    px, _, pz = position  # ignore Y
+
+    # normalize position into 0–1 space
+    x_min, x_max = CAMERA_X_RANGE
+    z_min, z_max = CAMERA_Z_RANGE
+
+    px = (px - x_min) / (x_max - x_min)
+    pz = (pz - z_min) / (z_max - z_min)
+    return [px, pz]

@@ -11,16 +11,20 @@ import triggered_audio
 import json
 import os
 from collections import deque
-  
+import integrate_OSC 
+
 def main():
     # Create a Camera object
     zed = sl.Camera()
     filename = "triggered.json"
 
     # velocity buffer 
-    
     velocity_history = deque(maxlen=100)
+    # create an OSC client 
 
+    client = integrate_OSC.initialize()
+
+    print(client)
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
     init_params.camera_resolution = sl.RESOLUTION.HD720  # Use HD720 video mode
@@ -122,12 +126,16 @@ def main():
                             dimensions[1], dimensions[2]))
                         triggered = mapping.intersection(map_scaled, position)
                         acceleration = mapping.get_acceleration(velocity_buffer)
+                        scaled_position = mapping.body_position_scaling(position.tolist())
+                        scaled_head_pos = mapping.head_position_scaling(head_pos[1])
+
                         new_entry = {
                             "triggered": triggered,
-                            "position": position.tolist(),
+                            "position_camera_space": position.tolist(),
+                            "position_unit_space": scaled_position,
                             "acceleration" : acceleration,
                             "dimensions": dimensions.tolist(),
-                            "head_position": head_pos.tolist(),                    
+                            "head_position": scaled_head_pos,                    
                             }
 
                         # Load existing data if file exists
@@ -140,7 +148,8 @@ def main():
                         data.append(new_entry)
                         print(f"triggered: {triggered}")
                         # Play audio based on triggered points
-                        engine.update(new_entry, acceleration)                                        
+                        integrate_OSC.send_data_to_server(client, new_entry)
+                        # engine.update(new_entry, acceleration)                                        
                         with open(filename, "w") as file:
                             json.dump(data, file, indent=4)
 
