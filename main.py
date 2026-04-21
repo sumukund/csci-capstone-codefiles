@@ -2,10 +2,7 @@
 
 import pyzed.sl as sl
 import cv2
-import numpy as np
 import mapping
-import matplotlib.pyplot as plt
-import math
 import keyboard 
 import triggered_audio
 import json
@@ -33,6 +30,9 @@ def main():
     init_params.sdk_verbose = 1
     HEAD_INDEX = 0  
 
+    RIGHT_HAND_INDEX = 4
+    LEFT_HAND_INDEX = 7
+
     print(f"init param {init_params.camera_resolution}")
     # Open the camera
     err = zed.open(init_params)
@@ -42,7 +42,9 @@ def main():
     # Get camera information
     camera_info = sl.CameraInformation(zed)
 
-    print(f"ZED camera resolution: {camera_info.camera_configuration.resolution.width} {camera_info.camera_configuration.resolution.height}")
+    # load in images for cache 
+    image_cache = {}
+      
     body_params = sl.BodyTrackingParameters()
     detection_parameters = sl.BodyTrackingParameters()
     detection_parameters.detection_model = sl.BODY_TRACKING_MODEL.HUMAN_BODY_ACCURATE  
@@ -120,6 +122,8 @@ def main():
                         # HEAD index (works for BODY_18 and BODY_34)
                         keypoints = first_body.keypoint
                         head_pos = keypoints[HEAD_INDEX]
+                        right_hand_pos = keypoints[RIGHT_HAND_INDEX]
+                        left_hand_pos = keypoints[LEFT_HAND_INDEX]
 
                         print(" 3D position: [{0},{1},{2}]\n Velocity: [{3},{4},{5}]\n 3D dimentions: [{6},{7},{8}]".format(
                             position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
@@ -128,14 +132,16 @@ def main():
                         acceleration = mapping.get_acceleration(velocity_buffer)
                         scaled_position = mapping.body_position_scaling(position.tolist())
                         scaled_head_pos = mapping.head_position_scaling(head_pos[1])
-
+                        hand_distance = mapping.hand_position_scaling_distance_calc(right_hand_pos, left_hand_pos)
+                        
                         new_entry = {
                             "triggered": triggered,
                             "position_camera_space": position.tolist(),
                             "position_unit_space": scaled_position,
-                            "acceleration" : acceleration,
                             "dimensions": dimensions.tolist(),
-                            "head_position": scaled_head_pos,                    
+                            "head_position": scaled_head_pos,
+                            "hand_distance": hand_distance, 
+                            "acceleration": acceleration                    
                             }
 
                         # Load existing data if file exists
@@ -147,9 +153,18 @@ def main():
                         # Append new entry
                         data.append(new_entry)
                         print(f"triggered: {triggered}")
-                        # Play audio based on triggered points
+
+                        # if triggered, send data to picture to show on projector
+                        if len(triggered) > 0:
+                            avg_img = mapping.load_image(triggered[0].get("image"))
+
+
+                            cv2.imshow("Illuminated Average", avg_img)
+
+                        # brightness = mapping.apply_brightness(image, scaled_position)
+                        
                         integrate_OSC.send_data_to_server(client, new_entry)
-                        # engine.update(new_entry, acceleration)                                        
+
                         with open(filename, "w") as file:
                             json.dump(data, file, indent=4)
 

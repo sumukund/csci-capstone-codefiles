@@ -2,6 +2,8 @@ import json
 import math
 import matplotlib.pyplot as plt
 import time
+import cv2
+import numpy as np
 # ------------------- CONFIG -------------------
 CAMERA_X_RANGE = (-2, 3)
 CAMERA_Z_RANGE = (2, 10)
@@ -11,7 +13,7 @@ FEET_TO_METERS = 0.3048
 last_head_y = None
 last_head_time = 0
 HEAD_TIMEOUT = 0.5  # seconds
-CAMERA_Y_RANGE = (0.3, 2.5)  # adjust to your setup
+CAMERA_Y_RANGE = (-0.336391, 1.8)  # adjust to your setup
 # ------------------- UTILITIES -------------------
 def feet_to_meters(width_feet, depth_feet):
     return width_feet * FEET_TO_METERS, depth_feet * FEET_TO_METERS
@@ -179,11 +181,11 @@ def head_position_scaling(head_y):
         if last_head_y is not None and (time.time() - last_head_time < HEAD_TIMEOUT):
             head_y = last_head_y
         else:
-            return 0.5  # safe default
+            return 0.1  # safe default
 
     hy = (head_y - y_min) / (y_max - y_min)
 
-    hy = max(0.0, min(1.0, hy))
+    # hy = max(0.0, min(1.0, hy))
 
     return float(hy)
 
@@ -197,3 +199,51 @@ def body_position_scaling(position):
     px = (px - x_min) / (x_max - x_min)
     pz = (pz - z_min) / (z_max - z_min)
     return [px, pz]
+
+def is_valid_point(p):
+    if p is None:
+        return False
+    try:
+        return all(not math.isnan(v) for v in p)
+    except (TypeError, ValueError):
+        return False
+
+
+def hand_position_scaling_distance_calc(right_hand, left_hand):
+    if not (is_valid_point(right_hand) and is_valid_point(left_hand)):
+        return 0.0  # safe fallback
+
+    rhx, rhy, rhz = right_hand
+    lhx, lhy, lhz = left_hand
+
+    try:
+        # normalize
+        rhx_n = (rhx - CAMERA_X_RANGE[0]) / (CAMERA_X_RANGE[1] - CAMERA_X_RANGE[0])
+        rhy_n = (rhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
+        rhz_n = (rhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
+
+        lhx_n = (lhx - CAMERA_X_RANGE[0]) / (CAMERA_X_RANGE[1] - CAMERA_X_RANGE[0])
+        lhy_n = (lhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
+        lhz_n = (lhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
+
+        dist = math.sqrt(
+            (rhx_n - lhx_n) ** 2 +
+            (rhy_n - lhy_n) ** 2 +
+            (rhz_n - lhz_n) ** 2
+        )
+
+        return float(dist)
+
+    except Exception:
+        return 0.0
+    
+
+def load_image(name):
+    path = f"avg_images/{name}"
+    img = cv2.imread(path)
+
+    return img
+
+def apply_brightness(image, brightness):
+    img = image.astype("float32") * brightness
+    return np.clip(img, 0, 255).astype("uint8")
