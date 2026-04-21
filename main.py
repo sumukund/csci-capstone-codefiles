@@ -7,7 +7,6 @@ import keyboard
 import triggered_audio
 import json
 import os
-from collections import deque
 import integrate_OSC 
 
 def main():
@@ -15,13 +14,16 @@ def main():
     zed = sl.Camera()
     filename = "triggered.json"
 
-    # velocity buffer 
-    velocity_history = deque(maxlen=100)
     # create an OSC client 
 
     client = integrate_OSC.initialize()
 
-    print(client)
+    #buffers 
+
+    velocity_filter = mapping.RollingAverageFilter(60)
+    head_filter = mapping.RollingAverageFilter(60)
+    body_filter = mapping.RollingAverageFilter(60)
+    hand_dist_filter = mapping.RollingAverageFilter(60)
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
     init_params.camera_resolution = sl.RESOLUTION.HD720  # Use HD720 video mode
@@ -73,7 +75,6 @@ def main():
     body_runtime_param.detection_confidence_threshold = 60
     image = sl.Mat()
     pose = sl.Pose()
-    engine = triggered_audio.AudioEngine()
 
 
     while True:
@@ -116,9 +117,7 @@ def main():
                             print(" Tracking ID: " + str(int(first_body.id)) + " tracking state: " + repr(
                                 first_body.tracking_state) + " / " + repr(first_body.action_state))
                         position = first_body.position
-                        velocity = first_body.velocity
-                        velocity_buffer = mapping.hold_velocity_buffer(velocity_history, velocity)
-                        
+                        velocity = first_body.velocity                        
                         dimensions = first_body.dimensions
                         # HEAD index (works for BODY_18 and BODY_34)
                         keypoints = first_body.keypoint
@@ -130,10 +129,11 @@ def main():
                             position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
                             dimensions[1], dimensions[2]))
                         triggered = mapping.intersection(map_scaled, position)
-                        acceleration = mapping.get_acceleration(velocity_buffer)
-                        scaled_position = mapping.body_position_scaling(position.tolist())
-                        scaled_head_pos = mapping.head_position_scaling(head_pos[1])
-                        hand_distance = mapping.hand_position_scaling_distance_calc(right_hand_pos, left_hand_pos)
+
+                        smoothed_velocity = mapping.get_filtered_vel(velocity, velocity_filter)
+                        scaled_position = mapping.body_position_scaling(position.tolist(), body_filter)
+                        scaled_head_pos = mapping.head_position_scaling(head_pos[1], head_filter)
+                        hand_distance = mapping.hand_position_scaling_distance_calc(right_hand_pos, left_hand_pos, hand_dist_filter)
                         
                         new_entry = {
                             "triggered": triggered,
@@ -142,7 +142,7 @@ def main():
                             "dimensions": dimensions.tolist(),
                             "head_position": scaled_head_pos,
                             "hand_distance": hand_distance, 
-                            "acceleration": acceleration                    
+                            "acceleration": smoothed_velocity                    
                             }
 
                         # Load existing data if file exists

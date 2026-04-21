@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import time
 import cv2
 import numpy as np
+from collections import deque
+
 # ------------------- CONFIG -------------------
 CAMERA_X_RANGE = (-2, 3)
 CAMERA_Z_RANGE = (2, 10)
@@ -13,8 +15,49 @@ FEET_TO_METERS = 0.3048
 last_head_y = None
 last_head_time = 0
 HEAD_TIMEOUT = 0.5  # seconds
-CAMERA_Y_RANGE = (-0.336391, 1.8)  # adjust to your setup
+CAMERA_Y_RANGE = (-0.5, 7)  # adjust to your setup
 # ------------------- UTILITIES -------------------
+
+class RollingAverageFilter:
+    def __init__(self, size=60):
+        self.size = size
+        self.buffer = deque(maxlen=size)
+
+    def add(self, value):
+        if value is None:
+            return
+
+        # Convert numpy arrays → list
+        if hasattr(value, "tolist"):
+            value = value.tolist()
+
+        # Validate numbers
+        if isinstance(value, (list, tuple)):
+            if any(v is None or (isinstance(v, float) and math.isnan(v)) for v in value):
+                return
+        else:
+            if isinstance(value, float) and math.isnan(value):
+                return
+
+        self.buffer.append(value)
+
+    def get_average(self):
+        if not self.buffer:
+            return None
+
+        first = self.buffer[0]
+
+        # Scalar case
+        if isinstance(first, (int, float)):
+            return sum(self.buffer) / len(self.buffer)
+
+        # Vector case
+        arr = np.array(self.buffer, dtype=np.float32)
+        return np.mean(arr, axis=0).tolist()
+    
+#
+
+
 def feet_to_meters(width_feet, depth_feet):
     return width_feet * FEET_TO_METERS, depth_feet * FEET_TO_METERS
 
@@ -145,54 +188,32 @@ def intersection(map_points, positions, radius=0.2):
     return triggered
 
 
-def hold_velocity_buffer(velocity_buffer, instant_velocity):
-
-    velocity_buffer.append((instant_velocity.tolist(), time.time()))
-    return velocity_buffer 
-
-# def get_filtered_vel(velocity_buffer):
 
 
-def get_acceleration(velocity_buffer):
-    if len(velocity_buffer) < 2:
-        return 0.0
 
-    (v_old, t_old) = velocity_buffer[0]
-    (v_new, t_new) = velocity_buffer[-1]
+def get_filtered_vel(velocity, velocity_filter):
+    velocity_filter.add(velocity)
+    smooth_velocity = velocity_filter.get_average()
+    return math.sqrt(smooth_velocity[0]*smooth_velocity[0] + smooth_velocity[1]*smooth_velocity[1] + smooth_velocity[2]*smooth_velocity[2])
 
-    dt = t_new - t_old
-    if dt == 0:
-        return 0.0
-
-    dx = (v_new[0] - v_old[0]) / dt
-    dy = (v_new[1] - v_old[1]) / dt
-    dz = (v_new[2] - v_old[2]) / dt
-
-    return math.sqrt(dx*dx + dy*dy + dz*dz)
-
-def head_position_scaling(head_y):
-    global last_head_y, last_head_time
-
+def head_position_scaling(head_y, head_filter):
+    if (math.isnan(head_y)):
+        last = head_filter.get_average()
+        return last if last is not None else 0.0
+    head_filter.add(head_y)
+    smooth_head_y = head_filter.get_average()
     y_min, y_max = CAMERA_Y_RANGE
 
-    if head_y is not None and head_y == head_y:
-        last_head_y = head_y
-        last_head_time = time.time()
-    else:
-        # fallback to last known value
-        if last_head_y is not None and (time.time() - last_head_time < HEAD_TIMEOUT):
-            head_y = last_head_y
-        else:
-            return 0.1  # safe default
+    hy = (smooth_head_y - y_min) / (y_max - y_min)
 
-    hy = (head_y - y_min) / (y_max - y_min)
-
-    # hy = max(0.0, min(1.0, hy))
+    hy = max(0.0, min(1.0, hy))
 
     return float(hy)
 
-def body_position_scaling(position):
-    px, _, pz = position  # ignore Y
+def body_position_scaling(position, body_filter):
+    body_filter.add(position)
+    smooth_body = body_filter.get_average()
+    px, _, pz = smooth_body  # ignore Y
 
     # normalize position into 0–1 space
     x_min, x_max = CAMERA_X_RANGE
@@ -200,6 +221,8 @@ def body_position_scaling(position):
 
     px = (px - x_min) / (x_max - x_min)
     pz = (pz - z_min) / (z_max - z_min)
+    px = max(0.0, min(1.0, px))
+    pz = max(0.0, min(1.0, pz))
     return [px, pz]
 
 def is_valid_point(p):
@@ -211,34 +234,24 @@ def is_valid_point(p):
         return False
 
 
-def hand_position_scaling_distance_calc(right_hand, left_hand):
+def hand_position_scaling_distance_calc(right_hand, left_hand, hand_dist_filter):
     if not (is_valid_point(right_hand) and is_valid_point(left_hand)):
-        return 0.0  # safe fallback
-
+        last = hand_dist_filter.get_average()
+        return last if last is not None else 0.0
     rhx, rhy, rhz = right_hand
     lhx, lhy, lhz = left_hand
 
-    try:
-        # # normalize
-        # rhx_n = (rhx - 0) / (5 - 0)
-        # rhy_n = (rhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
-        # rhz_n = (rhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
-
-        # lhx_n = (lhx - CAMERA_X_RANGE[0]) / (CAMERA_X_RANGE[1] - CAMERA_X_RANGE[0])
-        # lhy_n = (lhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
-        # lhz_n = (lhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
-
-        dist = math.sqrt(
-            (rhx - lhx) ** 2 +
-            (rhy - lhy) ** 2 +
-            (rhz - lhz) ** 2
-        )
-        print("dist", dist)
-        return float(dist)
-
-    except Exception:
-        return 0.0
+    dist = math.sqrt(
+        (rhx - lhx) ** 2 +
+        (rhy - lhy) ** 2 +
+        (rhz - lhz) ** 2
+    )
+    print("dist", dist)
+    hand_dist_filter.add(dist)
+    # normalized
+    smooth_dist = hand_dist_filter.get_average() / 1.2
     
+    return smooth_dist
 
 def load_image(name):
     path = f"avg_images/{name}"
