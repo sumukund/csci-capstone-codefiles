@@ -22,7 +22,7 @@ def send_data_to_server(client, point_array):
 
     position_x, position_z = point_array.get("position_unit_space")
     em1 = float(point_array.get("head_position"))
-    em2 = point_array.get("acceleration")
+    em2 = point_array.get("hand_distance")
     em2 = float(em2)
     print(position_x, position_z, em1, em2)
 

@@ -150,6 +150,8 @@ def hold_velocity_buffer(velocity_buffer, instant_velocity):
     velocity_buffer.append((instant_velocity.tolist(), time.time()))
     return velocity_buffer 
 
+# def get_filtered_vel(velocity_buffer):
+
 
 def get_acceleration(velocity_buffer):
     if len(velocity_buffer) < 2:
@@ -217,21 +219,21 @@ def hand_position_scaling_distance_calc(right_hand, left_hand):
     lhx, lhy, lhz = left_hand
 
     try:
-        # normalize
-        rhx_n = (rhx - CAMERA_X_RANGE[0]) / (CAMERA_X_RANGE[1] - CAMERA_X_RANGE[0])
-        rhy_n = (rhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
-        rhz_n = (rhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
+        # # normalize
+        # rhx_n = (rhx - 0) / (5 - 0)
+        # rhy_n = (rhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
+        # rhz_n = (rhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
 
-        lhx_n = (lhx - CAMERA_X_RANGE[0]) / (CAMERA_X_RANGE[1] - CAMERA_X_RANGE[0])
-        lhy_n = (lhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
-        lhz_n = (lhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
+        # lhx_n = (lhx - CAMERA_X_RANGE[0]) / (CAMERA_X_RANGE[1] - CAMERA_X_RANGE[0])
+        # lhy_n = (lhy - CAMERA_Y_RANGE[0]) / (CAMERA_Y_RANGE[1] - CAMERA_Y_RANGE[0])
+        # lhz_n = (lhz - CAMERA_Z_RANGE[0]) / (CAMERA_Z_RANGE[1] - CAMERA_Z_RANGE[0])
 
         dist = math.sqrt(
-            (rhx_n - lhx_n) ** 2 +
-            (rhy_n - lhy_n) ** 2 +
-            (rhz_n - lhz_n) ** 2
+            (rhx - lhx) ** 2 +
+            (rhy - lhy) ** 2 +
+            (rhz - lhz) ** 2
         )
-
+        print("dist", dist)
         return float(dist)
 
     except Exception:

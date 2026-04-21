@@ -27,6 +27,7 @@ def main():
     init_params.camera_resolution = sl.RESOLUTION.HD720  # Use HD720 video mode
     init_params.depth_mode = sl.DEPTH_MODE.NEURAL
     init_params.coordinate_units = sl.UNIT.METER
+    init_params.camera_fps = 60
     init_params.sdk_verbose = 1
     HEAD_INDEX = 0  
 
@@ -154,12 +155,12 @@ def main():
                         data.append(new_entry)
                         print(f"triggered: {triggered}")
 
-                        # if triggered, send data to picture to show on projector
-                        if len(triggered) > 0:
-                            avg_img = mapping.load_image(triggered[0].get("image"))
+                        # # if triggered, send data to picture to show on projector
+                        # if len(triggered) > 0:
+                        #     avg_img = mapping.load_image(triggered[0].get("image"))
 
 
-                            cv2.imshow("Illuminated Average", avg_img)
+                        #     cv2.imshow("Illuminated Average", avg_img)
 
                         # brightness = mapping.apply_brightness(image, scaled_position)
                         
