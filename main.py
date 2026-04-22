@@ -20,19 +20,18 @@ def main():
 
     #buffers 
 
-    velocity_filter = mapping.RollingAverageFilter(60)
-    head_filter = mapping.RollingAverageFilter(60)
-    body_filter = mapping.RollingAverageFilter(60)
-    hand_dist_filter = mapping.RollingAverageFilter(60)
+    velocity_filter = mapping.RollingAverageFilter(30)
+    head_filter = mapping.RollingAverageFilter(30)
+    body_filter = mapping.RollingAverageFilter(30)
+    hand_dist_filter = mapping.RollingAverageFilter(30)
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
-    init_params.camera_resolution = sl.RESOLUTION.HD720  # Use HD720 video mode
+    init_params.camera_resolution = sl.RESOLUTION.HD1080  # Use HD720 video mode
     init_params.depth_mode = sl.DEPTH_MODE.NEURAL
     init_params.coordinate_units = sl.UNIT.METER
     init_params.camera_fps = 60
     init_params.sdk_verbose = 1
     HEAD_INDEX = 0  
-
     RIGHT_HAND_INDEX = 4
     LEFT_HAND_INDEX = 7
 
@@ -72,7 +71,7 @@ def main():
     body_runtime_param = sl.BodyTrackingRuntimeParameters()
     # For outdoor scene or long range, the confidence should be lowered to avoid missing detections (~20-30)
     # For indoor scene or closer range, a higher confidence limits the risk of false positives and increase the precision (~50+)
-    body_runtime_param.detection_confidence_threshold = 60
+    body_runtime_param.detection_confidence_threshold = 70
     image = sl.Mat()
     pose = sl.Pose()
 
@@ -154,6 +153,9 @@ def main():
                         # Append new entry
                         data.append(new_entry)
                         print(f"triggered: {triggered}")
+                        print("Buffer length:", len(velocity_filter.buffer))
+                        print("Raw:", velocity)
+                        print("Filtered:", smoothed_velocity)
 
                         # # if triggered, send data to picture to show on projector
                         # if len(triggered) > 0:

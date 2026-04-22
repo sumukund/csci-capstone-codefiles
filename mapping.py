@@ -15,7 +15,7 @@ FEET_TO_METERS = 0.3048
 last_head_y = None
 last_head_time = 0
 HEAD_TIMEOUT = 0.5  # seconds
-CAMERA_Y_RANGE = (-0.5, 7)  # adjust to your setup
+CAMERA_Y_RANGE = (-0.5, 4)  # adjust to your setup
 # ------------------- UTILITIES -------------------
 
 class RollingAverageFilter:
@@ -202,13 +202,9 @@ def head_position_scaling(head_y, head_filter):
         return last if last is not None else 0.0
     head_filter.add(head_y)
     smooth_head_y = head_filter.get_average()
-    y_min, y_max = CAMERA_Y_RANGE
-
-    hy = (smooth_head_y - y_min) / (y_max - y_min)
-
+    hy = smooth_head_y / 1.56
     hy = max(0.0, min(1.0, hy))
-
-    return float(hy)
+    return hy
 
 def body_position_scaling(position, body_filter):
     body_filter.add(position)
