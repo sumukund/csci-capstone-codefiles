@@ -197,13 +197,23 @@ def get_filtered_vel(velocity, velocity_filter):
     return math.sqrt(smooth_velocity[0]*smooth_velocity[0] + smooth_velocity[1]*smooth_velocity[1] + smooth_velocity[2]*smooth_velocity[2])
 
 def head_position_scaling(head_y, head_filter):
-    if (math.isnan(head_y)):
+    if head_y is None or math.isnan(head_y):
         last = head_filter.get_average()
         return last if last is not None else 0.0
+
+
     head_filter.add(head_y)
     smooth_head_y = head_filter.get_average()
-    hy = smooth_head_y / 1.56
+
+    if smooth_head_y is None:
+        return 0.0
+
+    HEAD_MIN = -0.3
+    HEAD_MAX = 1
+
+    hy = (smooth_head_y - HEAD_MIN) / (HEAD_MAX - HEAD_MIN)
     hy = max(0.0, min(1.0, hy))
+
     return hy
 
 def body_position_scaling(position, body_filter):
