@@ -16,6 +16,8 @@ last_head_y = None
 last_head_time = 0
 HEAD_TIMEOUT = 0.5  # seconds
 CAMERA_Y_RANGE = (-0.5, 4)  # adjust to your setup
+HEAD_MIN = -0.3
+HEAD_MAX = 0.7
 # ------------------- UTILITIES -------------------
 
 class RollingAverageFilter:
@@ -196,20 +198,19 @@ def get_filtered_vel(velocity, velocity_filter):
     smooth_velocity = velocity_filter.get_average()
     return math.sqrt(smooth_velocity[0]*smooth_velocity[0] + smooth_velocity[1]*smooth_velocity[1] + smooth_velocity[2]*smooth_velocity[2])
 
-def head_position_scaling(head_y, head_filter):
-    if head_y is None or math.isnan(head_y):
+def head_position_scaling(head_pos, head_filter):
+    if head_pos is None or math.isnan(head_pos):
         last = head_filter.get_average()
         return last if last is not None else 0.0
 
 
-    head_filter.add(head_y)
+    head_filter.add(head_pos)
     smooth_head_y = head_filter.get_average()
 
     if smooth_head_y is None:
         return 0.0
 
-    HEAD_MIN = -0.3
-    HEAD_MAX = 1
+
 
     hy = (smooth_head_y - HEAD_MIN) / (HEAD_MAX - HEAD_MIN)
     hy = max(0.0, min(1.0, hy))
@@ -229,6 +230,7 @@ def body_position_scaling(position, body_filter):
     pz = (pz - z_min) / (z_max - z_min)
     px = max(0.0, min(1.0, px))
     pz = max(0.0, min(1.0, pz))
+
     return [px, pz]
 
 def is_valid_point(p):
@@ -244,8 +246,12 @@ def hand_position_scaling_distance_calc(right_hand, left_hand, hand_dist_filter)
     if not (is_valid_point(right_hand) and is_valid_point(left_hand)):
         last = hand_dist_filter.get_average()
         return last if last is not None else 0.0
-    rhx, rhy, rhz = right_hand
-    lhx, lhy, lhz = left_hand
+
+    hand_dist_filter.add([right_hand, left_hand])
+    # normalized
+    dist_avg = hand_dist_filter.get_average()
+    rhx, rhy, rhz = dist_avg[0]
+    lhx, lhy, lhz = dist_avg[1]
 
     dist = math.sqrt(
         (rhx - lhx) ** 2 +
@@ -253,10 +259,7 @@ def hand_position_scaling_distance_calc(right_hand, left_hand, hand_dist_filter)
         (rhz - lhz) ** 2
     )
     print("dist", dist)
-    hand_dist_filter.add(dist)
-    # normalized
-    smooth_dist = hand_dist_filter.get_average() / 1.2
-    
+    smooth_dist = max(0.0, min(1.0, dist))
     return smooth_dist
 
 def load_image(name):

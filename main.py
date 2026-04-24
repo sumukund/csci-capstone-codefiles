@@ -20,20 +20,20 @@ def main():
 
     #buffers 
 
-    velocity_filter = mapping.RollingAverageFilter(30)
-    head_filter = mapping.RollingAverageFilter(30)
-    body_filter = mapping.RollingAverageFilter(30)
-    hand_dist_filter = mapping.RollingAverageFilter(30)
+    velocity_filter = mapping.RollingAverageFilter(15)
+    head_filter = mapping.RollingAverageFilter(15)
+    body_filter = mapping.RollingAverageFilter(3)
+    hand_dist_filter = mapping.RollingAverageFilter(15)
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
-    init_params.camera_resolution = sl.RESOLUTION.HD1080  # Use HD720 video mode
+    init_params.camera_resolution = sl.RESOLUTION.HD720  # Use HD720 video mode
     init_params.depth_mode = sl.DEPTH_MODE.NEURAL
     init_params.coordinate_units = sl.UNIT.METER
     init_params.camera_fps = 60
     init_params.sdk_verbose = 1
-    HEAD_INDEX = 0  
-    RIGHT_HAND_INDEX = 4
-    LEFT_HAND_INDEX = 7
+    HEAD_INDEX = 26
+    RIGHT_HAND_INDEX = 15
+    LEFT_HAND_INDEX = 8
 
     print(f"init param {init_params.camera_resolution}")
     # Open the camera
@@ -41,20 +41,14 @@ def main():
     if err > sl.ERROR_CODE.SUCCESS:
         print("Camera Open : "+repr(err)+". Exit program.")
         exit()
-    # Get camera information
-    camera_info = sl.CameraInformation(zed)
-
-    # load in images for cache 
-    image_cache = {}
       
-    body_params = sl.BodyTrackingParameters()
     detection_parameters = sl.BodyTrackingParameters()
     detection_parameters.detection_model = sl.BODY_TRACKING_MODEL.HUMAN_BODY_ACCURATE  
     detection_parameters.enable_tracking = True
     detection_parameters.enable_body_fitting = True
     detection_parameters.body_format = sl.BODY_FORMAT.BODY_34
 
-    if body_params.enable_tracking:
+    if detection_parameters.enable_tracking:
         positional_tracking_param = sl.PositionalTrackingParameters()
         # positional_tracking_param.set_as_static = True
         positional_tracking_param.set_floor_as_origin = True
@@ -62,7 +56,7 @@ def main():
 
     print("Body tracking: Loading Module...")
 
-    err = zed.enable_body_tracking(body_params)
+    err = zed.enable_body_tracking(detection_parameters)
     if err > sl.ERROR_CODE.SUCCESS:
         print("Enable Body Tracking : "+repr(err)+". Exit program.")
         zed.close()
@@ -112,13 +106,13 @@ def main():
                         first_body = body_array[0]
                         print("First Person attributes:")
                         print(" Confidence (" + str(int(first_body.confidence)) + "/100)")
-                        if body_params.enable_tracking:
+                        if detection_parameters.enable_tracking:
                             print(" Tracking ID: " + str(int(first_body.id)) + " tracking state: " + repr(
                                 first_body.tracking_state) + " / " + repr(first_body.action_state))
                         position = first_body.position
                         velocity = first_body.velocity                        
                         dimensions = first_body.dimensions
-                        # HEAD index (works for BODY_18 and BODY_34)
+                        # HEAD index 
                         keypoints = first_body.keypoint
                         head_pos = keypoints[HEAD_INDEX]
                         right_hand_pos = keypoints[RIGHT_HAND_INDEX]
