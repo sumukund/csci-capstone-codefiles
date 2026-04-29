@@ -4,9 +4,6 @@ import pyzed.sl as sl
 import cv2
 import mapping
 import keyboard 
-import triggered_audio
-import json
-import os
 import integrate_OSC 
 
 def main():
@@ -22,7 +19,7 @@ def main():
 
     velocity_filter = mapping.RollingAverageFilter(15)
     head_filter = mapping.RollingAverageFilter(15)
-    body_filter = mapping.RollingAverageFilter(3)
+    body_filter = mapping.RollingAverageFilter(10)
     hand_dist_filter = mapping.RollingAverageFilter(15)
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
@@ -98,7 +95,6 @@ def main():
             print("Map origin:", origin)
             if pose != "SEARCHING FLOOR PLANE":    
                 # Draw map points
-                map_scaled = mapping.return_camera_space_points(use_dummy=False)
                 if bodies.is_new:
                     body_array = bodies.body_list
                     print(str(len(body_array)) + " Person(s) detected\n")
@@ -121,7 +117,6 @@ def main():
                         print(" 3D position: [{0},{1},{2}]\n Velocity: [{3},{4},{5}]\n 3D dimentions: [{6},{7},{8}]".format(
                             position[0], position[1], position[2], velocity[0], velocity[1], velocity[2], dimensions[0],
                             dimensions[1], dimensions[2]))
-                        triggered = mapping.intersection(map_scaled, position)
 
                         smoothed_velocity = mapping.get_filtered_vel(velocity, velocity_filter)
                         scaled_position = mapping.body_position_scaling(position.tolist(), body_filter)
@@ -129,7 +124,6 @@ def main():
                         hand_distance = mapping.hand_position_scaling_distance_calc(right_hand_pos, left_hand_pos, hand_dist_filter)
                         
                         new_entry = {
-                            "triggered": triggered,
                             "position_camera_space": position.tolist(),
                             "position_unit_space": scaled_position,
                             "dimensions": dimensions.tolist(),
@@ -138,32 +132,12 @@ def main():
                             "acceleration": smoothed_velocity                    
                             }
 
-                        # Load existing data if file exists
-                        if os.path.exists(filename):
-                            with open(filename, "r") as file:
-                                data = json.load(file)
-                        else:
-                            data = []
-                        # Append new entry
-                        data.append(new_entry)
-                        print(f"triggered: {triggered}")
                         print("Buffer length:", len(velocity_filter.buffer))
                         print("Raw:", velocity)
                         print("Filtered:", smoothed_velocity)
-
-                        # # if triggered, send data to picture to show on projector
-                        # if len(triggered) > 0:
-                        #     avg_img = mapping.load_image(triggered[0].get("image"))
-
-
-                        #     cv2.imshow("Illuminated Average", avg_img)
-
-                        # brightness = mapping.apply_brightness(image, scaled_position)
                         
                         integrate_OSC.send_data_to_server(client, new_entry)
 
-                        with open(filename, "w") as file:
-                            json.dump(data, file, indent=4)
 
     # Close the camera
     zed.disable_body_tracking()

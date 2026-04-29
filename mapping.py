@@ -15,7 +15,7 @@ FEET_TO_METERS = 0.3048
 last_head_y = None
 last_head_time = 0
 HEAD_TIMEOUT = 0.5  # seconds
-CAMERA_Y_RANGE = (-0.5, 4)  # adjust to your setup
+CAMERA_Y_RANGE = (-0.3, 4)  # adjust to your setup
 HEAD_MIN = -0.3
 HEAD_MAX = 0.7
 # ------------------- UTILITIES -------------------
