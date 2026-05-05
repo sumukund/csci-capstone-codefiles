@@ -18,9 +18,9 @@ def main():
     #buffers 
 
     velocity_filter = mapping.RollingAverageFilter(15)
-    head_filter = mapping.RollingAverageFilter(15)
+    head_filter = mapping.RollingAverageFilter(10)
     body_filter = mapping.RollingAverageFilter(10)
-    hand_dist_filter = mapping.RollingAverageFilter(15)
+    hand_dist_filter = mapping.RollingAverageFilter(10)
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
     init_params.camera_resolution = sl.RESOLUTION.HD720  # Use HD720 video mode

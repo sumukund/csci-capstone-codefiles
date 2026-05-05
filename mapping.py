@@ -15,9 +15,9 @@ FEET_TO_METERS = 0.3048
 last_head_y = None
 last_head_time = 0
 HEAD_TIMEOUT = 0.5  # seconds
-CAMERA_Y_RANGE = (-0.3, 4)  # adjust to your setup
-HEAD_MIN = -0.3
-HEAD_MAX = 0.7
+CAMERA_Y_RANGE = (-0.6, 4)  # adjust to your setup
+HEAD_MIN = -0.6
+HEAD_MAX = 0.5
 # ------------------- UTILITIES -------------------
 
 class RollingAverageFilter:
@@ -215,7 +215,15 @@ def head_position_scaling(head_pos, head_filter):
     hy = (smooth_head_y - HEAD_MIN) / (HEAD_MAX - HEAD_MIN)
     hy = max(0.0, min(1.0, hy))
 
-    return hy
+    scaled = -1
+    if hy > 0:
+        scaled = math.log10(hy)
+    
+    if scaled < -1:
+        scaled = -1
+    
+
+    return 1 + scaled
 
 def body_position_scaling(position, body_filter):
     body_filter.add(position)
@@ -248,8 +256,8 @@ def hand_position_scaling_distance_calc(right_hand, left_hand, hand_dist_filter)
         return last if last is not None else 0.0
 
     hand_dist_filter.add([right_hand, left_hand])
-    # normalized
     dist_avg = hand_dist_filter.get_average()
+
     rhx, rhy, rhz = dist_avg[0]
     lhx, lhy, lhz = dist_avg[1]
 
@@ -258,8 +266,23 @@ def hand_position_scaling_distance_calc(right_hand, left_hand, hand_dist_filter)
         (rhy - lhy) ** 2 +
         (rhz - lhz) ** 2
     )
-    print("dist", dist)
-    smooth_dist = max(0.0, min(1.0, dist))
+
+    min_dist = 0.5   # hands at sides
+    max_dist = 1.3   # fully spread (adjust as needed)
+
+    # normalize
+    norm = (dist - min_dist) / (max_dist - min_dist)
+
+    
+    scaled = -1
+    if norm > 0:
+        scaled = math.log10(norm)
+    # clamp to [0, 1]
+    inverted = 1.0 + scaled
+    smooth_dist = max(0.0, min(1.0, inverted))
+    
+
+    print("dist", dist, "normalized", inverted)
     return smooth_dist
 
 def load_image(name):
