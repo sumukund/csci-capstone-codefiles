@@ -53,10 +53,8 @@ Audio(data=data, rate=sr)
 sr, data = wavfile.read("input.wav")
 wavfile.write('trimmed_input.wav', sr, data[:10*sr]*3) # Make a bit louder for the campoarsion
 
-# Load the trimmed audio file
 sr_trimmed, data_trimmed = wavfile.read('trimmed_input.wav')
 
-# Manually create an in-memory WAV file to ensure correct header generation
 import io
 import wave
 with io.BytesIO() as wav_buffer:
@@ -66,8 +64,6 @@ with io.BytesIO() as wav_buffer:
         wf.setframerate(sr_trimmed) # Set sample rate
         wf.writeframes(data_trimmed.tobytes()) # Write the raw audio data
 
-    # Get the complete WAV file as bytes
     wav_data = wav_buffer.getvalue()
 
-# Play the trimmed audio using the generated WAV bytes
 Audio(wav_data)

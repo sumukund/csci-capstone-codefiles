@@ -19,7 +19,9 @@ def group_images(folder):
 
     return groups
 
-def compute_illuminated_average(image_paths):
+def compute_illuminated_average(image_paths, threshold_ratio=0.7,
+                                high_exp=0.5, low_exp=2.4):
+
     if not image_paths:
         return None
 
@@ -33,19 +35,39 @@ def compute_illuminated_average(image_paths):
         img = cv2.imread(path)
         if img is None:
             continue
+
         if img.shape[:2] != (h, w):
             if img.shape[:2] == (w, h):
                 img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
             else:
                 img = cv2.resize(img, (w, h))
-        accum += img.astype(np.float32)
+
+        img_f = img.astype(np.float32) / 255.0
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255.0
+
+        max_val = np.max(gray)
+        threshold = threshold_ratio * max_val
+
+        high_mask = gray >= threshold
+        low_mask = gray < threshold
+
+        high_mask_3 = np.repeat(high_mask[:, :, np.newaxis], 3, axis=2)
+        low_mask_3 = np.repeat(low_mask[:, :, np.newaxis], 3, axis=2)
+
+        img_f[high_mask_3] = np.power(img_f[high_mask_3], high_exp)
+        img_f[low_mask_3] = np.power(img_f[low_mask_3], low_exp)
+
+        img_processed = img_f * 255.0
+
+        accum += img_processed
         count += 1
 
     if count == 0:
         return None
 
     avg = accum / count
-    return np.uint8(avg)
+    return np.uint8(np.clip(avg, 0, 255))
 
 def process_all_groups(folder):
     groups = group_images(folder)
