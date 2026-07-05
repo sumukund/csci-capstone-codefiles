@@ -6,7 +6,10 @@ Embodied Geography: dancer tracking files
 ## 💡 Overview
 
 This system exploits the capabilities of the ZED Mini Stereo Camera to respond to the dancer in real-time as they traverse the space. This involves tracking position, calculating intersections of the dancer with our defined points, and tracking gesture and movement.
+
 ### Key Features
+
+---
 
 To determine the usefulness and usability of the camera for real-time position tracking, we defined initial parameters for the camera:
 • Resolution: 1080 pixels
@@ -19,8 +22,8 @@ Once a skeleton was detected we collected the following data:
 • Keypoints: Head Keypoint (26)
 • Keypoints: Right Wrist: (15)
 • Keypoints: Left Wrist: (8)
----
 
+---
 ## 🛠️ Tech Stack
 
 * **Language:** [ Python, OSC, MaxMSP ]
@@ -54,9 +57,10 @@ Then you can continue on and run the requirements and program.
    ```
 
 ### Running the Application
-To start the local development server:
+To start:
 ```
-py 
+sh make_venv.sh 
+
 ```
 The application will start running..
 
